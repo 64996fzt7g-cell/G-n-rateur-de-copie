@@ -1,0 +1,905 @@
+<title>Atelier de copie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Playwrite+FR+Moderne:wght@300;400&display=swap">
+<style>
+/* Layout : un cahier d'écolier — filtres en haut, tableau de projection au centre, feuilles A4 lignées Seyès pour l'impression */
+:root{
+  --paper:#f2f3f9; --surface:#ffffff; --ink:#1d2140; --muted:#5f6488; --line:#dadced;
+  --seyes:#4f55bf; --seyes-soft:#e6e7f8; --marge:#d33c47; --on-accent:#ffffff;
+  --wood:#7a5534;
+  --f-display:'Bricolage Grotesque','Trebuchet MS',sans-serif;
+  --f-body:'Andika','Verdana',sans-serif;
+  --f-cursive:'Playwrite FR Moderne','Segoe Script','Brush Script MT',cursive;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#121427; --surface:#1b1e36; --ink:#e7e8f6; --muted:#9ca0c6; --line:#2f3357;
+  --seyes:#9095f2; --seyes-soft:#272b55; --marge:#ff6d74; --on-accent:#11132b; --wood:#6a4a2e; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#121427; --surface:#1b1e36; --ink:#e7e8f6; --muted:#9ca0c6; --line:#2f3357;
+  --seyes:#9095f2; --seyes-soft:#272b55; --marge:#ff6d74; --on-accent:#11132b; --wood:#6a4a2e; color-scheme:dark}
+
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+*{box-sizing:border-box}
+button,select,input{font:inherit;color:inherit}
+.wrap{max-width:1320px;margin:0 auto;padding-inline:clamp(16px,3vw,32px);padding-block:18px 48px;display:flex;flex-direction:column;gap:18px}
+
+/* En-tête */
+.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:42px;height:42px;border-radius:8px;flex:none;border:1px solid var(--line);
+  background:
+   linear-gradient(to right,transparent 9px,var(--marge) 9px,var(--marge) 10.5px,transparent 10.5px),
+   repeating-linear-gradient(to bottom,var(--seyes) 0 1.2px,transparent 1.2px 12px),
+   repeating-linear-gradient(to bottom,var(--seyes-soft) 0 1px,transparent 1px 3px),
+   var(--surface)}
+.brand h1{font-family:var(--f-display);font-weight:800;font-size:clamp(22px,3vw,30px);margin:0;letter-spacing:-.01em;line-height:1}
+.brand p{margin:3px 0 0;color:var(--muted);font-size:13px}
+.seg{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px}
+.seg button{border:0;background:transparent;padding:7px 15px;border-radius:999px;cursor:pointer;font-weight:700;color:var(--muted)}
+.seg button.on{background:var(--seyes);color:var(--on-accent)}
+.seg.big button{padding:9px 20px;font-size:15px}
+
+/* Filtres */
+.filters{display:grid;grid-template-columns:auto 1fr;gap:10px 16px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.flabel{font-family:var(--f-display);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;min-width:0}
+.chip{border:1px solid var(--line);background:var(--paper);padding:6px 12px 6px 10px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;font-size:14px}
+.chip::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--c,var(--seyes))}
+.chip.plain::before{display:none}
+.chip.on{border-color:var(--seyes);background:var(--seyes-soft);font-weight:700}
+@media (max-width:640px){.filters{grid-template-columns:1fr}.flabel{margin-top:4px}}
+
+/* Activités */
+.acts{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:8px}
+.act{text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:11px 13px;cursor:pointer;display:flex;flex-direction:column;gap:3px}
+.act b{font-family:var(--f-display);font-size:15.5px;font-weight:700}
+.act span{color:var(--muted);font-size:13px;line-height:1.35}
+.act.on{border-color:var(--seyes);box-shadow:inset 0 0 0 1px var(--seyes);background:var(--seyes-soft)}
+@media (max-width:480px){.acts{grid-template-columns:1fr 1fr}.act span{display:none}}
+
+/* Barre du tableau */
+.stagewrap{display:flex;flex-direction:column;gap:10px}
+.bar1,.ctl{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
+.txtlbl{flex:1 1 260px;min-width:0;font-size:14px}
+.txtlbl b{font-family:var(--f-display);font-size:16px}
+.txtlbl span{color:var(--muted);margin-left:6px}
+.ctl{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:9px 12px;min-height:52px}
+.ctl label{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--muted)}
+.ctl select{padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)}
+.status{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
+.btn{border:1px solid var(--seyes);background:var(--seyes);color:var(--on-accent);padding:7px 14px;border-radius:9px;cursor:pointer;font-weight:700}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.ghost.on{background:var(--seyes-soft);border-color:var(--seyes)}
+.btn:disabled{opacity:.45;cursor:default}
+.icon{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:7px 11px;cursor:pointer;font-weight:700}
+:focus-visible{outline:3px solid var(--seyes);outline-offset:2px}
+
+/* Tableau de projection */
+.stage{--k:1;position:relative;min-height:58vh;border-radius:14px;padding:clamp(20px,3.5vw,52px);display:flex;flex-direction:column;gap:18px;overflow:auto}
+.stage.vert{--b-bg:#1d3a31;--b-ink:#f1efe3;--b-acc:#f3cf63;--b-soft:rgba(241,239,227,.45);--b-hl:rgba(243,207,99,.25);--b-line:rgba(241,239,227,.18);
+  background:radial-gradient(ellipse at 30% 20%,#25483d 0,#1d3a31 60%,#18322a 100%);color:var(--b-ink);border:12px solid var(--wood)}
+.stage.blanc{--b-bg:#ffffff;--b-ink:#16192e;--b-acc:#3f45b8;--b-soft:#6a6f90;--b-hl:#fff0a8;--b-line:#e1e3f0;
+  background:#fff;color:var(--b-ink);border:1px solid var(--line)}
+.consigne{font-size:calc(clamp(15px,1.4vw,21px)*var(--k));color:var(--b-acc);font-weight:700;margin:0}
+.body{flex:1;display:flex;flex-direction:column;gap:18px;min-width:0}
+.txt{font-size:calc(clamp(21px,2.35vw,38px)*var(--k));line-height:1.7;overflow-wrap:break-word}
+.stage.cursive .txt:not(.caps),.cursive-f{font-family:var(--f-cursive);font-size:calc(clamp(18px,2vw,32px)*var(--k));line-height:2.2}
+.w{transition:opacity 1.1s ease,background .3s}
+.w.gone{opacity:0}
+.ch.w{transition:opacity .5s ease}
+.muted{color:var(--b-soft)}
+
+.steps{display:flex;flex-wrap:wrap;gap:6px}
+.step{font-size:13px;padding:4px 10px;border-radius:999px;border:1px solid var(--b-line);color:var(--b-soft)}
+.step.done{color:var(--b-ink);border-color:var(--b-soft)}
+.step.on{background:var(--b-acc);border-color:var(--b-acc);color:var(--b-bg);font-weight:700}
+.pg-zone{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;min-height:30vh}
+.pg-item{line-height:1.5}
+.k-mot{font-size:calc(clamp(44px,8vw,120px)*var(--k))}
+.k-groupe{font-size:calc(clamp(36px,5.6vw,88px)*var(--k))}
+.k-phrase{font-size:calc(clamp(28px,3.9vw,60px)*var(--k))}
+.k-texte{font-size:calc(clamp(22px,2.7vw,42px)*var(--k));text-align:left;max-width:34em}
+.stage.cursive .pg-item{font-family:var(--f-cursive);line-height:1.9}
+.stage.cursive .k-mot{font-size:calc(clamp(36px,6.5vw,96px)*var(--k))}
+.pg-write{font-family:var(--f-display);font-weight:800;font-size:calc(clamp(34px,5vw,72px)*var(--k));color:var(--b-acc);display:flex;flex-direction:column;gap:10px}
+.pg-write small{font-family:var(--f-body);font-weight:400;font-size:calc(clamp(15px,1.5vw,22px)*var(--k));color:var(--b-soft)}
+.bar{height:8px;border-radius:99px;background:var(--b-line);overflow:hidden}
+.bar i{display:block;height:100%;width:100%;background:var(--b-acc)}
+.intro{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;font-size:calc(clamp(17px,1.8vw,26px)*var(--k))}
+.intro .big{font-family:var(--f-display);font-weight:800;font-size:calc(clamp(40px,6vw,84px)*var(--k));color:var(--b-acc);margin:0;line-height:1}
+.intro p{margin:0}
+
+.chrono-row{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 22px}
+.clock{font-family:var(--f-display);font-weight:800;font-size:calc(clamp(48px,7vw,104px)*var(--k));font-variant-numeric:tabular-nums;line-height:1;color:var(--b-acc)}
+.clock.warn{color:#ff8a65}
+.clock.over{color:#ff6b6b}
+.chrono-info{color:var(--b-soft);font-size:calc(clamp(15px,1.4vw,21px)*var(--k))}
+.counting .w{cursor:pointer}
+.counting .w:hover{background:var(--b-hl)}
+.w.got{text-decoration:underline;text-decoration-color:var(--b-acc);text-decoration-thickness:.09em;text-underline-offset:.2em}
+.result{font-family:var(--f-display);font-weight:700;font-size:calc(clamp(18px,2vw,30px)*var(--k));color:var(--b-acc)}
+
+.nw{white-space:nowrap}
+.gap{display:inline-block;min-width:.62em;border-bottom:.09em solid var(--b-acc);text-align:center;margin-inline:.03em;line-height:1.1}
+.gap .ans{visibility:hidden}
+.show .gap .ans{visibility:visible;color:var(--b-acc)}
+
+.mx{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;align-items:start;padding-block:10px;border-bottom:1px dashed var(--b-line)}
+.mx-n{font-family:var(--f-display);font-weight:800;color:var(--b-acc);font-size:calc(clamp(22px,2.3vw,34px)*var(--k))}
+.mx-tiles{display:flex;flex-wrap:wrap;gap:10px;min-width:0}
+.tile{font-size:calc(clamp(20px,2.3vw,36px)*var(--k));padding:.12em .5em;border:2px solid var(--b-soft);border-radius:.35em}
+.tile.punct{border-style:dashed}
+.stage.cursive .tile{font-family:var(--f-cursive);font-size:calc(clamp(17px,1.9vw,30px)*var(--k))}
+.mx-sol,.cl-sol,.cp-model{display:none}
+.show .mx-sol,.show .cl-sol{display:block;color:var(--b-acc);grid-column:2;font-size:calc(clamp(18px,2vw,30px)*var(--k))}
+.show .cp-model{display:block}
+.cl{padding-block:8px;border-bottom:1px dashed var(--b-line);display:flex;flex-direction:column;gap:6px}
+.cl-q{font-size:calc(clamp(21px,2.35vw,38px)*var(--k));word-break:break-all;line-height:1.5}
+.stage.cursive .cl-q{font-family:var(--f-cursive);line-height:2}
+.caps{letter-spacing:.04em}
+.cp-model{border-top:1px dashed var(--b-line);padding-top:16px;color:var(--b-acc)}
+.lamp-on .w{opacity:.13;transition:opacity .45s,background .3s}
+.lamp-on .w.past{opacity:.38}
+.lamp-on .w.lit{opacity:1;background:var(--b-hl);border-radius:.18em;box-shadow:0 0 0 .14em var(--b-hl)}
+
+.corr{display:flex;flex-direction:column}
+.corr-top{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 20px}
+.legend{font-size:calc(clamp(14px,1.3vw,19px)*var(--k));color:var(--b-soft)}
+mark.hl-maj{background:#ffd84d;color:#1a1c2e;border-radius:.15em;padding:0 .06em}
+mark.hl-pt{background:#ff8fb1;color:#1a1c2e;border-radius:.15em;padding:0 .12em;font-weight:700}
+.corr-row{display:grid;grid-template-columns:7.5em 1fr;gap:4px 16px;padding-block:8px;border-bottom:1px dashed var(--b-line);align-items:baseline}
+.corr-k{font-size:calc(clamp(13px,1.2vw,18px)*var(--k));color:var(--b-acc);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.corr-x{font-size:calc(clamp(19px,2.1vw,34px)*var(--k));line-height:1.5;min-width:0}
+.stage.cursive .corr-x{font-family:var(--f-cursive);line-height:1.9}
+@media (max-width:560px){.corr-row{grid-template-columns:1fr}}
+
+/* Plein écran */
+.stagewrap:fullscreen{background:var(--paper);padding:14px;overflow:auto}
+.stagewrap:fullscreen .stage{flex:1;min-height:0}
+.stagewrap.pseudo-fs{position:fixed;inset:0;z-index:50;background:var(--paper);padding:14px;padding-top:calc(14px + env(safe-area-inset-top,0px));overflow:auto}
+.stagewrap.pseudo-fs .stage{flex:1}
+
+/* Impression */
+.prctl{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.prctl label{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:14px}
+.prctl select{padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)}
+.prnote{font-size:13.5px;color:var(--muted);margin:0;max-width:75ch}
+.prnote kbd{font-family:var(--f-body);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px;background:var(--surface);color:var(--ink)}
+.sheetScroll{overflow-x:auto;padding-block:6px 10px}
+.sheets{display:flex;flex-direction:column;gap:26px;width:max-content;margin-inline:auto}
+.sheet{width:210mm;height:297mm;background:#fff;color:#1b1d2e;padding:9mm 11mm;display:flex;flex-direction:column;gap:5mm;box-shadow:0 2px 14px rgba(20,24,60,.16);flex:none;overflow:hidden}
+.half{flex:1 1 0;display:flex;flex-direction:column;min-height:0}
+.half + .half{border-top:1px dashed #a9adc8;padding-top:7mm}
+.hd{display:flex;justify-content:space-between;gap:4mm;font-size:8.5pt;color:#5d6180;font-family:var(--f-body)}
+.hd .tag{text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:#4f55bf}
+.half h3{font-family:var(--f-display);font-weight:700;font-size:15pt;margin:2mm 0 4mm;color:#1b1d2e}
+.model{font-family:var(--f-body);font-size:16pt;line-height:1.75;white-space:pre-line;color:#1b1d2e}
+.model.cursive{font-family:var(--f-cursive);font-size:14.5pt;line-height:2.25}
+.model.long{font-size:14pt;line-height:1.65}
+.model.cursive.long{font-size:12.5pt;line-height:2.1}
+.model.solo{font-size:19pt;line-height:1.8}
+.model.cursive.solo{font-size:17pt;line-height:2.3}
+.sheet{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+
+/* Mes textes */
+.mine-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:16px;align-items:start}
+@media (max-width:860px){.mine-grid{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.panel h2{font-family:var(--f-display);font-weight:700;font-size:19px;margin:0;text-wrap:balance}
+.frow{display:flex;flex-wrap:wrap;gap:10px}
+.field{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--muted);flex:1 1 140px;min-width:0}
+.field input,.field select,.field textarea{padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:15px;width:100%}
+.field textarea{min-height:220px;resize:vertical;line-height:1.55}
+.hint{font-size:13px;color:var(--muted);margin:0}
+.msg{font-size:13.5px;color:var(--seyes);font-weight:700;min-height:1.2em;margin:0}
+.mlist{display:flex;flex-direction:column;gap:0}
+.mitem{display:flex;flex-direction:column;gap:6px;padding-block:12px;border-top:1px solid var(--line)}
+.mitem:first-child{border-top:0}
+.mitem b{font-family:var(--f-display);font-size:16px}
+.mitem .meta{font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
+.mitem .meta i{font-style:normal;width:8px;height:8px;border-radius:50%;background:var(--c);display:inline-block}
+.mitem p{margin:0;font-size:14px;color:var(--ink);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.mitem .acts2{display:flex;flex-wrap:wrap;gap:6px}
+.mitem .acts2 .btn{padding:5px 11px;font-size:13px}
+.btn.danger{border-color:var(--marge);color:var(--marge);background:transparent}
+.btn.danger.armed{background:var(--marge);color:var(--on-accent)}
+.empty{color:var(--muted);font-size:14px;margin:0;padding:14px;border:1px dashed var(--line);border-radius:10px}
+.nb{display:inline-block;min-width:1.6em;padding:0 6px;border-radius:99px;background:var(--seyes-soft);color:var(--seyes);font-size:12px;text-align:center;margin-left:6px;font-variant-numeric:tabular-nums}
+.minetag{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--seyes);border:1px solid var(--seyes);border-radius:99px;padding:1px 7px;margin-left:6px;vertical-align:2px}
+
+/* Fiche réponse Mémoire flash */
+.fl-head{display:flex;justify-content:space-between;align-items:baseline;gap:4mm;font-size:10pt;color:#3b3f5c}
+.fl-head h3{margin:0;font-family:var(--f-display);font-weight:800;font-size:16pt;color:#1b1d2e}
+.fl-sub{font-size:9pt;color:#5d6180;margin:1mm 0 2.5mm}
+.fl{width:100%;border-collapse:collapse;table-layout:fixed;font-size:9pt;color:#3b3f5c;flex:1}
+.fl th{font-family:var(--f-display);font-weight:700;font-size:8.5pt;text-transform:uppercase;letter-spacing:.06em;text-align:left;padding:0 1.5mm 1mm;color:#4f55bf;border-bottom:.4mm solid #4f55bf}
+.fl td{border-bottom:.25mm solid #c9cce0;padding:0 1.5mm;vertical-align:bottom}
+.fl td.lab{font-weight:700;color:#1b1d2e;vertical-align:middle;font-size:9pt;line-height:1.15}
+.fl td.ck{vertical-align:middle;text-align:center}
+.fl td.ck span{display:inline-block;width:5mm;height:5mm;border:.35mm solid #4f55bf;border-radius:1mm}
+.ln{background-image:repeating-linear-gradient(to bottom,transparent 0 6.7mm,#9da1bf 6.7mm 7mm)}
+.l1{height:8mm}.l1.ln{background-size:100% 8mm;background-image:linear-gradient(to bottom,transparent 7.6mm,#9da1bf 7.6mm 7.9mm,transparent 7.9mm)}
+.l2{height:14mm}.l4{height:28mm}
+.fl-bilan{display:flex;flex-wrap:wrap;gap:2mm 8mm;font-size:9.5pt;color:#1b1d2e;margin-top:3mm;padding:2mm 3mm;background:#f2f3fb;border-radius:1.5mm}
+.fl-bilan span{white-space:nowrap}
+
+@media print{
+  @page{size:A4;margin:0}
+  :root{padding:0!important}
+  body{background:#fff!important}
+  .noprint{display:none!important}
+  #proj,#mine{display:none!important}
+  #print{display:block!important}
+  .wrap{padding:0!important;max-width:none;gap:0}
+  .sheetScroll{overflow:visible;padding:0}
+  .sheets{gap:0;width:auto;margin:0}
+  .sheet{box-shadow:none;break-after:page;margin:0}
+}
+@media (prefers-reduced-motion:reduce){.w,.lamp-on .w{transition:none}}
+</style>
+
+<div class="wrap">
+  <header class="top noprint">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div><h1>Atelier de copie</h1><p>Copie au tableau et fiches à imprimer · CE2 – CM2</p></div>
+    </div>
+    <div class="seg big" role="tablist" id="tabs">
+      <button data-tab="proj" class="on" role="tab">Projection</button>
+      <button data-tab="print" role="tab">Impression</button>
+      <button data-tab="mine" role="tab">Mes textes<span class="nb" id="nbMine">0</span></button>
+    </div>
+  </header>
+
+  <section class="filters noprint" aria-label="Filtres">
+    <span class="flabel">Thème</span><div class="chips" id="themes"></div>
+    <span class="flabel">Niveau</span><div><div class="seg" id="niv"><button data-n="CE2">CE2</button><button data-n="CM2">CM2</button></div></div>
+    <span class="flabel">Type de texte</span><div class="chips" id="genres"></div>
+    <span class="flabel">Textes</span><div><div class="seg" id="src"><button data-s="tous">Tous les textes</button><button data-s="mine">Mes textes seulement</button></div></div>
+  </section>
+
+  <section id="proj" class="noprint">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="acts" id="acts"></div>
+      <div class="stagewrap" id="stageWrap">
+        <div class="bar1">
+          <div class="txtlbl" id="txtLbl"></div>
+          <select id="txtPick" aria-label="Choisir le texte" style="max-width:min(100%,320px);padding:7px 8px;border-radius:9px;border:1px solid var(--line);background:var(--surface);color:var(--ink)"></select>
+          <button class="btn ghost" id="txtNew">Au hasard</button>
+          <div class="seg" id="font"><button data-f="script" class="on">Script</button><button data-f="cursive">Cursive</button></div>
+          <div class="seg" id="board"><button data-b="vert" class="on">Tableau</button><button data-b="blanc">Fond blanc</button></div>
+          <button class="icon" id="smaller" aria-label="Réduire le texte">A−</button>
+          <button class="icon" id="bigger" aria-label="Agrandir le texte">A+</button>
+          <button class="icon" id="fs">Plein écran</button>
+        </div>
+        <div class="ctl" id="ctl"></div>
+        <div class="stage vert" id="stage">
+          <p class="consigne" id="consigne"></p>
+          <div class="body" id="body"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="print" hidden>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="prctl noprint">
+        <label for="prKind">Fiche <select id="prKind"><option value="textes">Textes à copier</option><option value="flash">Fiche réponse · Mémoire flash</option></select></label>
+        <label class="onlyTx">Modèle <span class="seg" id="prFont"><button data-f="cursive" class="on">Cursive</button><button data-f="script">Script</button></span></label>
+        <label for="prPer" class="onlyTx">Textes par page <select id="prPer"><option value="2">2</option><option value="1">1</option></select></label>
+        <label for="prPages">Pages <select id="prPages"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></label>
+        <button class="btn" id="prNew">Nouveau tirage</button>
+      </div>
+      <p class="prnote noprint" id="prFlashNote" hidden>À utiliser avec l'activité « Mémoire flash » : à la fin des 8 étapes, le tableau affiche la correction complète. Chaque page contient 2 fiches identiques à découper.</p>
+      <p class="prnote noprint">Pour imprimer : <kbd>Ctrl</kbd> + <kbd>P</kbd> (<kbd>Cmd</kbd> + <kbd>P</kbd> sur Mac), format A4, marges « Aucune ». Les textes suivent le thème, le niveau et le type choisis plus haut.</p>
+      <div class="sheetScroll"><div class="sheets" id="sheets"></div></div>
+    </div>
+  </section>
+</div>
+
+<section id="mine" class="noprint" hidden>
+  <div class="mine-grid">
+    <form class="panel" id="mf" autocomplete="off">
+      <h2 id="mfTitle">Ajouter un texte</h2>
+      <div class="frow">
+        <label class="field">Thème<select id="mfTh"></select></label>
+        <label class="field">Niveau<select id="mfN"><option>CE2</option><option>CM2</option></select></label>
+        <label class="field">Type de texte<select id="mfG"></select></label>
+      </div>
+      <label class="field">Titre<input id="mfT" maxlength="120" placeholder="Ex. : Le loup et l'agneau"></label>
+      <label class="field">Texte<textarea id="mfX" placeholder="Collez ou tapez le texte ici."></textarea></label>
+      <p class="hint">Pour un poème, une lettre ou une recette, allez à la ligne comme sur le modèle : les retours à la ligne sont conservés.</p>
+      <div class="frow" style="align-items:center">
+        <button class="btn" type="submit" id="mfSave">Enregistrer le texte</button>
+        <button class="btn ghost" type="button" id="mfCancel" hidden>Annuler la modification</button>
+      </div>
+      <p class="msg" id="mfMsg" role="status"></p>
+    </form>
+    <div class="panel">
+      <h2>Mes textes</h2>
+      <p class="hint" id="storeNote">Vos textes s'ajoutent à ceux du thème choisi, dans toutes les activités de projection et dans les fiches à imprimer.</p>
+      <div class="mlist" id="mlist"></div>
+    </div>
+  </div>
+</section>
+
+<script>
+/* ===================== DONNÉES ===================== */
+const THEMES = {
+animaux:{nom:'Animaux',c:'#3f9a5b',
+ mots:['hérisson','écureuil','papillon','baleine','renard','hirondelle','tortue','chouette','grenouille','kangourou','coccinelle','dauphin'],
+ groupes:['un petit hérisson','la queue du renard','les ailes du papillon','dans le terrier','une chouette blanche','au fond de l\'océan'],
+ phrases:['Le hérisson dort tout l\'hiver.','La chouette chasse la nuit dans la forêt.','Les hirondelles partent vers le sud en automne.','La baleine bleue est le plus grand animal du monde.','Le renard roux traverse le pré sans faire de bruit.','La grenouille saute de nénuphar en nénuphar.'],
+ textes:[
+  {n:'CE2',g:'doc',t:'Le hérisson',x:'Le hérisson est un petit mammifère couvert de piquants. Il vit dans les haies, les jardins et les bois. La nuit, il cherche des vers, des limaces et des insectes. Quand il a peur, il se roule en boule. En hiver, il dort dans un nid de feuilles jusqu\'au printemps.'},
+  {n:'CE2',g:'poeme',t:'Ma tortue',x:'Ma tortue a sa maison\nPosée sur son dos tout rond.\nElle marche sans se presser,\nElle a le temps de rêver.\nQuand il pleut, elle rentre chez elle\nEt se moque bien de la grêle.'},
+  {n:'CE2',g:'devinette',t:'Qui suis-je ?',x:'J\'ai de grandes oreilles et un petit nez qui bouge sans arrêt. Je creuse des terriers sous la terre. J\'adore les carottes et les feuilles de pissenlit. Mes pattes arrière sont très longues pour bondir. Qui suis-je ? Je suis le lapin.'},
+  {n:'CM2',g:'recit',t:'Le renard et la lune',x:'Ce soir-là, le renard sortit de son terrier plus tôt que d\'habitude. La lune, ronde et pâle, éclairait le chemin qui longeait la rivière. Il avança prudemment, le museau au ras du sol, guettant le moindre bruit. Soudain, un froissement dans les fougères le fit s\'arrêter net. Deux yeux brillants l\'observaient. Ce n\'était qu\'une chouette, perchée sur une branche basse, qui le regardait passer d\'un air moqueur.'},
+  {n:'CM2',g:'doc',t:'Le grand voyage des hirondelles',x:'Chaque automne, les hirondelles quittent l\'Europe pour rejoindre l\'Afrique. Ce long voyage, appelé migration, peut dépasser dix mille kilomètres. Les oiseaux se nourrissent en vol, en attrapant des insectes. Ils traversent la mer Méditerranée puis le désert du Sahara, où ils doivent affronter la chaleur et le vent. Au printemps, la plupart reviennent dans le même village, parfois dans le même nid.'},
+  {n:'CM2',g:'poeme',t:'Le chat de la voisine',x:'Le chat de la voisine\nSe promène sur les toits,\nIl surveille la cuisine\nEt les oiseaux d\'autrefois.\nLe soir, quand la lune brille,\nIl s\'assoit sur la cheminée\nEt regarde, entre deux grilles,\nLe monde endormi rêver.'}
+ ]},
+arts:{nom:'Arts',c:'#c04f8f',
+ mots:['peinture','pinceau','couleur','sculpture','tableau','musée','palette','dessin','argile','portrait','aquarelle','chevalet'],
+ groupes:['un pinceau fin','les couleurs vives','au musée d\'art','une statue de bronze','le cadre doré','sur la toile blanche'],
+ phrases:['Le peintre mélange le bleu et le jaune.','Nous avons modelé un vase en argile.','Le musée expose des tableaux très anciens.','Avec trois couleurs, on peut en fabriquer beaucoup d\'autres.','La sculptrice taille la pierre avec patience.','Mon dessin représente un bateau sur la mer.'],
+ textes:[
+  {n:'CE2',g:'doc',t:'Les couleurs primaires',x:'Le rouge, le jaune et le bleu sont les couleurs primaires. En les mélangeant, on obtient d\'autres couleurs. Le jaune et le bleu donnent du vert. Le rouge et le jaune donnent de l\'orange. Le bleu et le rouge donnent du violet. Pour éclaircir une couleur, on ajoute un peu de blanc.'},
+  {n:'CE2',g:'recit',t:'Au musée',x:'Mercredi, Lina est allée au musée avec sa classe. Elle a vu des tableaux immenses et des statues en marbre. Devant un portrait, elle s\'est arrêtée longtemps. La dame du tableau semblait la regarder. En sortant, Lina a promis de revenir avec ses parents.'},
+  {n:'CE2',g:'poeme',t:'Mon pinceau',x:'Mon pinceau danse sur la feuille,\nIl peint un arbre et un écureuil,\nUn peu de vert pour le gazon,\nBeaucoup de rouge pour la maison.\nEt quand mon dessin est fini,\nIl plonge dans l\'eau et dit merci.'},
+  {n:'CM2',g:'doc',t:'Les peintures de Lascaux',x:'Il y a environ dix-huit mille ans, des hommes ont peint les parois d\'une grotte, à Lascaux, en Dordogne. On y voit des chevaux, des taureaux et des cerfs. Pour fabriquer leurs couleurs, ces artistes utilisaient de la terre, du charbon de bois et des pierres réduites en poudre. Ils appliquaient la peinture avec les doigts, avec des tampons de mousse ou en soufflant à travers un os creux. Découverte en 1940 par des adolescents, la grotte est aujourd\'hui fermée au public pour la protéger.'},
+  {n:'CM2',g:'recit',t:'L\'atelier de mon grand-père',x:'L\'atelier de mon grand-père sentait la peinture à l\'huile et le bois ciré. Des toiles inachevées s\'appuyaient contre les murs, et des dizaines de pinceaux trempaient dans des pots de confiture. Il me laissait parfois m\'asseoir sur un tabouret pour le regarder travailler. Il ne parlait presque pas, mais chaque coup de pinceau semblait raconter une histoire. Un jour, il m\'a tendu une palette et m\'a dit simplement : « À toi. »'}
+ ]},
+regions:{nom:'Régions de France',c:'#3a6fc4',
+ semaines:{1:'tour, fer, observer, jardin, Paris, région, visiter, étage, majestueux, monument'.split(', '),2:'château, escalier, roi, forêt, chasser, forme, ressembler, salle, dessin, cheval'.split(', '),3:'abbaye, mer, sable, oiseau, rocher, paysage, horizon, bizarre, voyageur, prison'.split(', '),4:'falaise, vague, craie, galet, Étretat, frapper, tomber, blanc, fragile, Normandie'.split(', '),5:'Carnac, Bretagne, champ, mystère, ancien, lourd, menhir, légende, préhistoire, raconter, aligner'.split(', '),6:'bateau, côte, sauter, coton, citadelle, tempête, peintre, toile, éclater, flotter'.split(', ')},
+ mots:['monument','citadelle','menhir','abbaye','marée','galets','Bretagne','montagne','Provence','vignoble','phare','lavande','falaise','village','rivière','château','Alsace','volcan'],
+ groupes:['la grande tour en fer','un escalier en fer à cheval','les falaises de craie','les alignements de menhirs','la baie du Mont-Saint-Michel','les champs de lavande','un phare breton','au sommet du mont Blanc','les châteaux de la Loire','le long de la côte','une crêpe au beurre salé'],
+ phrases:['La Bretagne est entourée par la mer sur trois côtés.','En Provence, la lavande fleurit en été.','Le mont Blanc est le plus haut sommet des Alpes.','Les châteaux de la Loire attirent de nombreux visiteurs.','En Alsace, les maisons sont décorées de colombages.','La Corse est une île de la mer Méditerranée.','Maël et Ava visitent la ville de Paris.','Les vagues frappent les falaises d\'Étretat.','Les menhirs de Carnac gardent leur secret.'],
+ textes:[
+  {n:'CE2',g:'lettre',t:'Carte postale de Bretagne',x:'Chère Mamie,\nNous sommes en vacances à Quimper. Hier, nous avons visité un phare au bord de la mer. Le vent soufflait très fort ! Ce midi, j\'ai mangé des crêpes au beurre salé. Demain, nous irons pêcher des crevettes sur la plage.\nGros bisous,\nTom'},
+  {n:'CE2',g:'doc',t:'La Provence',x:'La Provence se trouve dans le sud-est de la France. Il y fait chaud et sec en été. On y cultive la lavande, les olives et les tomates. Le mistral est un vent froid qui souffle souvent dans la vallée du Rhône. Marseille est la plus grande ville de la région.'},
+  {n:'CE2',g:'poeme',t:'Mon village',x:'Mon village a un clocher,\nUne fontaine et un marché,\nDes volets bleus, des toits rouges\nEt un vieux chat qui ne bouge.\nLe dimanche, on entend les cloches\nEt l\'odeur du pain qui s\'approche.'},
+  {n:'CM2',g:'doc',t:'Les Alpes',x:'Les Alpes forment la plus haute chaîne de montagnes d\'Europe occidentale. Elles s\'étendent de la France jusqu\'à l\'Autriche. Le mont Blanc, situé à la frontière entre la France et l\'Italie, culmine à plus de 4 800 mètres. En hiver, les stations de ski accueillent des milliers de visiteurs. En été, les randonneurs découvrent les lacs, les glaciers et les alpages où paissent les vaches. Les marmottes et les bouquetins y vivent à l\'état sauvage.'},
+  {n:'CM2',g:'recit',t:'Le marché de Noël',x:'En décembre, toute la ville de Strasbourg se transforme. Sur la grande place, des chalets de bois proposent des bredele, ces petits gâteaux à la cannelle, et du pain d\'épices. Les rues sont illuminées de guirlandes dorées. Ce soir-là, Jeanne serrait la main de son père en levant les yeux vers le gigantesque sapin. Elle avait l\'impression d\'être entrée dans un livre de contes.'},
+  {s:1,n:'CE2',g:'recit',t:'La Tour Eiffel',x:'Maël et Ava visitent la ville de Paris. Depuis le jardin, ils observent la grande tour en fer. Ce majestueux monument domine toute la région. Les enfants montent jusqu\'au premier étage pour admirer le magnifique paysage.'},
+  {s:1,n:'CM2',g:'recit',t:'La Tour Eiffel',x:'De passage à Paris, Maël et Ava découvrent la majestueuse Tour Eiffel. Érigée pour l\'Exposition universelle de 1889, cette immense structure de fer puddlé surplombe la capitale. Les deux jeunes aventuriers grimpent les nombreuses marches pour atteindre le premier étage. Depuis ce belvédère, la vue panoramique sur la Seine et la ville lumière est tout simplement spectaculaire.'},
+  {s:2,n:'CE2',g:'doc',t:'Le château de Fontainebleau',x:'Le château de Fontainebleau est une ancienne demeure des rois de France. Devant le monument, un célèbre escalier ressemble à un fer à cheval. Maël et Ava découvrent la grande salle avant de se promener dans la forêt.'},
+  {s:2,n:'CM2',g:'doc',t:'Le château de Fontainebleau',x:'Entouré d\'une vaste forêt domaniale, le château de Fontainebleau a accueilli les souverains français pendant plus de huit siècles. Ce palais possède plus de quinze cents pièces et de magnifiques jardins. Sur la cour d\'honneur, l\'impressionnant escalier en fer à cheval fascine les visiteurs. C\'est ici que Napoléon Ier a fait ses adieux à sa garde avant de partir en exil.'},
+  {s:3,n:'CE2',g:'prescriptif',t:'Recette pour une visite réussie au Mont-Saint-Michel',x:'Pour réussir ta visite, choisis d\'abord une belle journée. Observe le paysage et suis l\'oiseau qui vole vers l\'horizon. Monte les marches jusqu\'à l\'ancienne prison. Enfin, admire la grande mer qui entoure ce rocher bizarre !'},
+  {s:3,n:'CM2',g:'prescriptif',t:'Mode d\'emploi pour explorer la merveille du Mont-Saint-Michel',x:'Avant de traverser la baie, consulte attentivement les horaires des marées pour ne pas te faire surprendre par la mer. Embarque à bord de la navette « Le Passeur » pour rejoindre le rocher. Grimpe les ruelles pavées jusqu\'à la majestueuse abbaye gothique, qui servit autrefois de prison. Arrivé au sommet, contemple l\'horizon infini : ce spectacle grandiose restera gravé dans ta mémoire.'},
+  {s:4,n:'CE2',g:'doc',t:'Les falaises d\'Étretat',x:'En Normandie, la ville d\'Étretat possède d\'immenses falaises de craie blanche. Chaque jour, de fortes vagues frappent la roche. Parfois, de lourds morceaux tombent sur la plage. Les galets protègent le rivage contre l\'érosion, mais ce magnifique paysage naturel reste fragile. Il faut le respecter.'},
+  {s:4,n:'CM2',g:'doc',t:'Les falaises d\'Étretat',x:'Situées sur la Côte d\'Albâtre, les falaises d\'Étretat constituent un chef-d\'œuvre naturel sculpté par la mer et le vent. Ces gigantesques murailles de craie hébergent la célèbre Porte d\'Aval et l\'Aiguille creuse, qui ont inspiré l\'écrivain Maurice Leblanc pour les aventures d\'Arsène Lupin. Au pied des parois, les vagues façonnent les galets qui forment un rempart naturel indispensable contre les tempêtes. Ce patrimoine fragile nécessite une protection constante.'},
+  {s:5,n:'CE2',g:'poeme',t:'Les pierres silencieuses',x:'Dans les grands champs de Bretagne,\nS\'alignent de sombres montagnes.\nCes menhirs lourds et anciens\nGardent le secret des anciens.\nLes hommes de la préhistoire\nOnt gravé toute leur histoire.\nSous le vol des oiseaux marins,\nLe guide raconte le destin\nDe ces mystérieux monuments\nDressés là depuis si longtemps.'},
+  {s:5,n:'CM2',g:'poeme',t:'Les géants de la lande',x:'Sur la lande bretonne, au cœur de la préhistoire,\nDes milliers de géants racontent leur histoire.\nCes lourds blocs de granit, dressés par nos ancêtres,\nForment de longs rubans que l\'on voudrait connaître.\nSont-ils des sanctuaires ou de grands calendriers ?\nLe mystère demeure sous le ciel des paludiers.\nChaque puissant menhir, chaque sombre dolmen\nTraverse les années, fidèle à la Bretagne.\nParcours ces alignements, contemple ce vestige,\nOù ce passé lointain nous donne le vertige.'},
+  {s:6,n:'CE2',g:'carnet',t:'Belle-Île-en-Mer',x:'Hier, Maël et Ava ont pris le grand bateau pour rejoindre la côte bretonne. Soudain, une violente tempête a éclaté sur l\'océan. Les vagues sautaient sur les rochers comme de grosses pelotes de coton blanc. Aujourd\'hui, le calme revient enfin. Un peintre installe sa toile près de la citadelle. Demain, nos deux aventuriers exploreront l\'île sous un beau soleil levant.'},
+  {s:6,n:'CM2',g:'carnet',t:'Extrait du carnet de bord de Maël et Ava',x:'Après une traversée mouvementée depuis le continent, nous accostons enfin à Le Palais, sur l\'île la plus vaste de Bretagne. La citadelle Vauban domine le port de sa haute silhouette de pierre. Plus loin, aux Aiguilles de Port Coton, le spectacle de la mer déchaînée est saisissant : l\'écume blanche jaillit contre les falaises déchiquetées. Fasciné par cette lumière changeante, le peintre Claude Monet y planta autrefois son chevalet. Ce territoire préservé nous offre une aventure inoubliable au milieu de l\'océan.'}
+ ]},
+pays:{nom:'Pays du monde',c:'#d9822b',
+ mots:['Japon','Brésil','Canada','Égypte','Australie','désert','océan','frontière','capitale','voyage','continent','Sénégal'],
+ groupes:['la grande muraille de Chine','les pyramides d\'Égypte','un pays lointain','la forêt amazonienne','le drapeau du Canada','un long voyage en avion'],
+ phrases:['Le Japon est un pays formé de nombreuses îles.','Les pyramides d\'Égypte ont été construites il y a très longtemps.','Le kangourou vit en Australie.','La forêt amazonienne est la plus grande forêt tropicale du monde.','Au Canada, l\'hiver est long et très froid.','Dakar est la capitale du Sénégal.'],
+ textes:[
+  {n:'CE2',g:'doc',t:'Le Japon',x:'Le Japon est un pays d\'Asie. Il est formé de milliers d\'îles. Sa capitale est Tokyo, une ville immense. Au printemps, les cerisiers se couvrent de fleurs roses. Les Japonais mangent souvent du riz, du poisson et de la soupe. Pour écrire, ils utilisent des signes très différents de nos lettres.'},
+  {n:'CE2',g:'lettre',t:'Une lettre du Canada',x:'Salut Léo,\nJe t\'écris depuis Montréal, au Canada. Ici, il fait moins quinze degrés ! Toute la ville est couverte de neige. À l\'école, nous patinons sur une patinoire en plein air. Hier, j\'ai goûté du sirop d\'érable sur de la neige : c\'était délicieux.\nÀ bientôt,\nInès'},
+  {n:'CE2',g:'poeme',t:'Le tour du monde',x:'Je prends ma valise et mon chapeau,\nJe pars en avion, en train, en bateau.\nÀ Londres, je dis hello,\nÀ Madrid, je dis hola,\nAu Japon, konnichiwa,\nPuis je rentre chez moi\nEt je dis bonsoir à papa.'},
+  {n:'CM2',g:'doc',t:'L\'Amazonie',x:'La forêt amazonienne s\'étend sur neuf pays d\'Amérique du Sud, mais la plus grande partie se trouve au Brésil. Elle est traversée par l\'Amazone, l\'un des plus longs fleuves du monde. Cette forêt abrite une immense variété d\'animaux et de plantes : jaguars, singes hurleurs, perroquets et arbres géants. Elle joue aussi un rôle important pour le climat de la planète. Pourtant, chaque année, une partie de la forêt disparaît pour laisser place à des champs et à des routes.'},
+  {n:'CM2',g:'recit',t:'Dans le désert',x:'Le soleil venait à peine de se lever lorsque la caravane se mit en route. Les dromadaires avançaient d\'un pas lent et régulier, chargés de sacs et de bidons d\'eau. Autour de nous, les dunes s\'étendaient à perte de vue, comme une mer de sable immobile. Notre guide, Moussa, connaissait chaque étoile et chaque pierre. « Dans le désert, disait-il, il ne faut jamais se presser. » À midi, nous nous sommes abrités sous une tente pour boire un thé à la menthe.'}
+ ]},
+ecole:{nom:'École',c:'#6a5ad0',
+ mots:['cartable','cahier','crayon','récréation','maîtresse','trousse','tableau','cantine','gomme','dictée','bibliothèque','compas'],
+ groupes:['un cahier rouge','dans la cour de récréation','la trousse de Lucas','au tableau noir','les élèves de la classe','une règle de trente centimètres'],
+ phrases:['Je range mes crayons dans ma trousse.','La cloche sonne la fin de la récréation.','Aujourd\'hui, nous avons une dictée de mots.','Le maître écrit la date au tableau.','Mon cartable est lourd le lundi matin.','À la cantine, nous avons mangé des lentilles.'],
+ textes:[
+  {n:'CE2',g:'recit',t:'La rentrée',x:'C\'est la rentrée. Sami a un cartable tout neuf et une trousse bleue. Dans la cour, il retrouve ses copains. Ils se racontent leurs vacances en riant. Quand la cloche sonne, tous les élèves se mettent en rang. La nouvelle maîtresse les attend devant la porte avec un grand sourire.'},
+  {n:'CE2',g:'regle',t:'Les règles de la classe',x:'Dans notre classe, nous levons le doigt pour parler. Nous écoutons quand un camarade s\'exprime. Nous rangeons notre matériel à la fin de la journée. Nous prenons soin des livres de la bibliothèque. Nous aidons ceux qui ont des difficultés. Ensemble, nous apprenons mieux.'},
+  {n:'CE2',g:'poeme',t:'Ma trousse',x:'Dans ma trousse, il y a\nUn crayon qui ne parle pas,\nUne gomme qui efface tout,\nDes feutres jaunes, verts et roux,\nUne règle bien droite\nEt des ciseaux dans leur boîte.'},
+  {n:'CM2',g:'recit',t:'La sortie scolaire',x:'Le car s\'arrêta enfin devant l\'entrée du parc naturel. Les élèves de CM2 descendirent un par un, leur sac à dos sur les épaules. Madame Durand compta trois fois les enfants avant de donner le signal du départ. Toute la matinée, ils observèrent les traces d\'animaux, ramassèrent des feuilles et dessinèrent les oiseaux dans leur carnet. À l\'heure du pique-nique, Paul s\'aperçut qu\'il avait oublié son sandwich. Sans hésiter, ses amis partagèrent le leur.'},
+  {n:'CM2',g:'doc',t:'L\'école autrefois',x:'Il y a cent ans, l\'école était bien différente. Les élèves écrivaient à la plume, qu\'ils trempaient dans un encrier posé sur leur pupitre. Les garçons et les filles étaient souvent séparés. En hiver, un poêle à bois chauffait la classe. Le maître enseignait la lecture, l\'écriture, le calcul et la morale. Le certificat d\'études, passé vers douze ans, était un examen très important pour les familles.'}
+ ]},
+sport:{nom:'Sport',c:'#d64545',
+ mots:['ballon','course','équipe','arbitre','natation','vélo','médaille','stade','gymnase','raquette','champion','sifflet'],
+ groupes:['un but magnifique','la piscine municipale','les joueurs de l\'équipe','une médaille d\'or','sur la ligne de départ','le coup de sifflet final'],
+ phrases:['L\'arbitre siffle le début du match.','Nina nage le crawl à la piscine.','Notre équipe a gagné le tournoi de handball.','Le coureur franchit la ligne d\'arrivée en premier.','Pour jouer au tennis, il faut une raquette et une balle.','Le Tour de France se déroule en juillet.'],
+ textes:[
+  {n:'CE2',g:'recit',t:'Le match',x:'Samedi, l\'équipe de Léa jouait contre l\'école voisine. Les deux équipes couraient très vite après le ballon. À la dernière minute, Léa a tiré de toutes ses forces. Le ballon est entré dans le but ! Tout le monde a crié de joie. L\'arbitre a sifflé la fin du match.'},
+  {n:'CE2',g:'regle',t:'La course de relais',x:'Les joueurs forment des équipes de quatre. Chaque équipe a un bâton appelé témoin. Au signal, le premier coureur part avec le témoin. Il le donne au deuxième, qui le donne au troisième, puis au quatrième. L\'équipe qui arrive la première a gagné. Attention : si le témoin tombe, il faut le ramasser !'},
+  {n:'CE2',g:'poeme',t:'Mon vélo',x:'Sur mon vélo, je file, je file,\nPlus rapide que les nuages.\nJe pédale autour de la ville,\nJe dépasse les villages.\nDans la descente, je ris très fort,\nDans la montée, je fais des efforts.'},
+  {n:'CM2',g:'doc',t:'Les Jeux olympiques',x:'Les premiers Jeux olympiques ont eu lieu en Grèce, il y a près de trois mille ans, dans la ville d\'Olympie. Les athlètes s\'affrontaient à la course, à la lutte ou au lancer du disque. En 1896, le Français Pierre de Coubertin a relancé cette tradition : ce sont les Jeux olympiques modernes. Aujourd\'hui, des milliers de sportifs venus du monde entier y participent tous les quatre ans. Les cinq anneaux du drapeau olympique représentent l\'union des continents.'},
+  {n:'CM2',g:'recit',t:'La dernière longueur',x:'Il ne restait plus qu\'une longueur de bassin. Mes bras étaient lourds et mes jambes brûlaient, mais j\'entendais les encouragements de mes camarades au bord de la piscine. Je respirai profondément et plongeai la tête sous l\'eau. Je ne voyais plus que la ligne noire au fond du bassin. Quand ma main toucha enfin le mur, je relevai la tête, à bout de souffle. Sur le tableau lumineux, mon nom s\'affichait en deuxième position. Jamais je n\'avais nagé aussi vite.'}
+ ]},
+cuisine:{nom:'Cuisine',c:'#b8862b',
+ mots:['farine','casserole','fourchette','gâteau','recette','beurre','saladier','four','sucre','tablier','cuillère','confiture'],
+ groupes:['une pincée de sel','un gâteau au chocolat','dans le grand saladier','deux œufs frais','la pâte à crêpes','une cuillère en bois'],
+ phrases:['Je verse la farine dans le saladier.','Le gâteau cuit dans le four pendant trente minutes.','Papa coupe les légumes pour la soupe.','Il faut se laver les mains avant de cuisiner.','La confiture de fraises est ma préférée.','Nous avons préparé une salade de fruits.'],
+ textes:[
+  {n:'CE2',g:'recette',t:'La salade de fruits',x:'Ingrédients : deux pommes, une banane, une orange, une poignée de raisins, un peu de jus de citron.\nLave les fruits. Épluche la banane et l\'orange. Coupe tous les fruits en petits morceaux. Mets-les dans un saladier. Ajoute le jus de citron et mélange doucement. Place au frais une heure avant de servir.'},
+  {n:'CE2',g:'recit',t:'Le gâteau de Mamie',x:'Le dimanche, Hugo fait un gâteau avec sa mamie. Il casse les œufs, verse le sucre et mélange la pâte. Mamie fait fondre le chocolat. Toute la cuisine sent bon. Pendant la cuisson, Hugo lèche la cuillère. Ce soir, toute la famille va se régaler.'},
+  {n:'CE2',g:'poeme',t:'La soupe',x:'Dans la marmite, il y a\nDes carottes et des petits pois,\nUn poireau, trois navets\nEt des pommes de terre épluchées.\nÇa mijote, ça glougloute,\nVenez vite, on y goûte !'},
+  {n:'CM2',g:'recette',t:'Les crêpes',x:'Pour quatre personnes : 250 grammes de farine, quatre œufs, un demi-litre de lait, une pincée de sel et deux cuillères à soupe de sucre.\nVerse la farine dans un saladier et creuse un puits au centre. Ajoute les œufs, le sel et le sucre, puis mélange avec un fouet. Verse le lait petit à petit pour éviter les grumeaux. Laisse reposer la pâte une heure. Fais chauffer une poêle légèrement beurrée, verse une louche de pâte et fais cuire chaque face environ une minute. Demande l\'aide d\'un adulte pour retourner les crêpes.'},
+  {n:'CM2',g:'doc',t:'D\'où vient le chocolat ?',x:'Le chocolat est fabriqué à partir des fèves du cacaoyer, un arbre qui pousse dans les régions chaudes et humides, comme en Côte d\'Ivoire ou au Ghana. Les fèves sont d\'abord récoltées dans de grandes cabosses, puis mises à fermenter et à sécher au soleil. Elles sont ensuite grillées et broyées pour obtenir une pâte de cacao. Il y a plusieurs siècles, les Aztèques en faisaient déjà une boisson épicée. Le chocolat n\'est arrivé en Europe qu\'au seizième siècle.'}
+ ]},
+musique:{nom:'Musique',c:'#2a9aa0',
+ mots:['violon','tambour','guitare','chanson','orchestre','piano','flûte','concert','mélodie','trompette','chorale','partition'],
+ groupes:['les notes de musique','un grand orchestre','la chorale de l\'école','le son du tambour','une douce mélodie','sur la scène du théâtre'],
+ phrases:['Le pianiste joue une mélodie très douce.','La chorale chante pour la fête de l\'école.','Mon frère apprend à jouer de la guitare.','Le chef d\'orchestre lève sa baguette.','Il y a sept notes dans la gamme : do, ré, mi, fa, sol, la, si.','Le tambour résonne dans toute la salle.'],
+ textes:[
+  {n:'CE2',g:'doc',t:'Les familles d\'instruments',x:'Les instruments de musique sont classés en familles. Les instruments à cordes, comme le violon ou la guitare, vibrent quand on frotte ou pince leurs cordes. Les instruments à vent, comme la flûte ou la trompette, résonnent quand on souffle dedans. Les percussions, comme le tambour, produisent un son quand on les frappe.'},
+  {n:'CE2',g:'recit',t:'Le concert',x:'Ce soir, c\'est le concert de l\'école. Zoé a un peu peur. Elle tient sa flûte bien fort. Le rideau s\'ouvre et la salle est pleine. Zoé voit ses parents au premier rang. Elle respire et commence à jouer. À la fin, tout le monde applaudit.'},
+  {n:'CE2',g:'poeme',t:'La pluie musicienne',x:'La pluie joue du tambour\nSur le toit de ma maison,\nElle tapote tout autour,\nElle invente une chanson.\nPlic, ploc, sur les carreaux,\nPlic, ploc, dans les ruisseaux.'},
+  {n:'CM2',g:'doc',t:'Mozart',x:'Wolfgang Amadeus Mozart est né en 1756 à Salzbourg, en Autriche. Dès l\'âge de cinq ans, il composait de petites pièces pour le clavier. Son père l\'emmena voyager à travers l\'Europe pour jouer devant les rois et les princes, qui s\'émerveillaient de son talent. Au cours de sa courte vie, Mozart écrivit plus de six cents œuvres : des symphonies, des opéras, des concertos et des sonates. Il mourut à Vienne à trente-cinq ans, mais sa musique est encore jouée dans le monde entier.'},
+  {n:'CM2',g:'recit',t:'Le violon du grenier',x:'En fouillant dans le grenier de sa grand-tante, Malik découvrit un étui noir couvert de poussière. À l\'intérieur, un violon reposait sur un tissu de velours rouge. Une des cordes était cassée et le vernis s\'écaillait, mais l\'instrument semblait l\'attendre depuis toujours. Il posa délicatement l\'archet sur les cordes. Un son grinçant s\'échappa et fit fuir le chat. Malik éclata de rire. Il venait de décider qu\'il apprendrait à en jouer.'},
+  {n:'CM2',g:'poeme',t:'L\'orchestre du vent',x:'Le vent souffle dans les branches\nComme dans une flûte de bois,\nLes feuilles, en robes blanches,\nDansent toutes à la fois.\nLe ruisseau joue de la harpe,\nLe tonnerre bat le tambour,\nEt la forêt, sous son écharpe,\nApplaudit jusqu\'au jour.'}
+ ]}
+};
+const GENRES={recit:'Récit',doc:'Documentaire',poeme:'Poème',recette:'Recette',lettre:'Lettre',regle:'Règle',devinette:'Devinette',prescriptif:'Mode d\'emploi',carnet:'Carnet de voyage'};
+
+/* Typographie française : espaces insécables */
+const fr=s=>s.replace(/ ([:;!?»])/g,' $1').replace(/« /g,'« ').replace(/(\d) (\d{3})/g,'$1 $2');
+const ALL=[];
+for(const [k,th] of Object.entries(THEMES)){
+  th.phrases=th.phrases.map(fr); th.groupes=th.groupes.map(fr);
+  th.textes.forEach(t=>{t.x=fr(t.x);t.t=fr(t.t);t.th=k;t.id='b'+ALL.length;ALL.push(t);});
+}
+
+/* ===================== OUTILS ===================== */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const nl=s=>s.replace(/\n/g,'<br>');
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const sample=(a,n)=>shuffle(a.slice()).slice(0,n);
+const wordCount=s=>s.split(/[ \n]+/).filter(w=>/[\p{L}\d]/u.test(w)).length;
+function wordsHtml(text){let i=0;return text.split('\n').map(l=>l.split(/ +/).filter(Boolean).map(w=>`<span class="w" data-i="${i++}">${esc(w)}</span>`).join(' ')).join('<br>');}
+function units(t){
+  return t.x.split('\n').filter(Boolean).flatMap(l=> t.g==='mots'?[l]:t.g==='poeme'?[l]:(l.match(/[^.!?]+[.!?]+( »)?|[^.!?]+$/g)||[l]).map(s=>s.trim()).filter(Boolean));
+}
+function excerpt(t){ if(t.g==='poeme') return t.x.split('\n').slice(0,4).join('\n'); return units(t).slice(0,2).join(' '); }
+function sel(id,label,opts,def){return `<label for="${id}">${label} <select id="${id}">${opts.map(([v,l])=>`<option value="${v}" ${String(v)===String(def)?'selected':''}>${l}</option>`).join('')}</select></label>`;}
+
+/* ===================== ÉTAT ===================== */
+const state={tab:'proj',theme:'animaux',niv:'CE2',genre:'tous',act:'progressif',text:null,k:1,cursive:false,board:'vert',prCursive:true,src:'tous'};
+try{const s=JSON.parse(localStorage.getItem('atelier-copie')||'{}');for(const k of ['theme','niv','act','k','cursive','board','prCursive','src'])if(k in s)state[k]=s[k];}catch(e){}
+function save(){try{localStorage.setItem('atelier-copie',JSON.stringify(state));}catch(e){}}
+if(state.theme!=='tous'&&!THEMES[state.theme])state.theme='animaux';
+
+const selThemes=()=>state.theme==='tous'?Object.values(THEMES):[THEMES[state.theme]];
+let MINE=[];
+const inTheme=t=>state.theme==='tous'||t.th===state.theme;
+function basePool(){
+  if(state.src==='mine'){const m=MINE.filter(inTheme);if(m.length)return m;}
+  return ALL.concat(MINE).filter(inTheme);
+}
+const mineOnlyEmpty=()=>state.src==='mine'&&!MINE.some(inTheme);
+function themePhrases(){
+  const mineS=MINE.filter(inTheme).flatMap(t=>units(t)).filter(u=>{const n=wordCount(u);return n>=4&&n<=14&&/[.!?]$/.test(u);});
+  if(state.src==='mine'&&mineS.length)return mineS;
+  return selThemes().flatMap(t=>t.phrases).concat(mineS);
+}
+function pool(){
+  let p=basePool().filter(t=>t.n===state.niv);
+  if(state.genre!=='tous'){const q=p.filter(t=>t.g===state.genre);if(q.length)p=q;}
+  return p.length?p:basePool();
+}
+function pickText(){const p=pool();const q=p.length>1?p.filter(t=>t!==state.text):p;return q[Math.floor(Math.random()*q.length)];}
+
+/* ===================== TIMERS ===================== */
+let timers=[],ivs=[];
+const later=(f,ms)=>timers.push(setTimeout(f,ms));
+const every=(f,ms)=>ivs.push(setInterval(f,ms));
+function stopAll(){timers.forEach(clearTimeout);ivs.forEach(clearInterval);timers=[];ivs=[];}
+
+const body=$('#body'),ctl=$('#ctl');
+function toggleShow(btn,on,off){btn.onclick=()=>{const s=body.classList.toggle('show');btn.textContent=s?off:on;btn.classList.toggle('on',s);};}
+
+/* ===================== ACTIVITÉS ===================== */
+const ACTS={
+progressif:{name:'Mémoire flash',desc:'Mot, groupe de mots, phrase puis petit texte : on regarde, ça s\'efface, on écrit.',
+ consigne:'Regarde bien. Quand le modèle disparaît, écris-le de mémoire.',usesText:true,
+ init(){
+  const base=state.niv==='CE2'?5:3;
+  ctl.innerHTML=sel('pgT','Temps d\'affichage',[2,3,4,5,6,8].map(v=>[v,v+' s']),base)+
+   `<button class="btn" id="pgGo">Commencer</button><button class="btn ghost" id="pgRe" disabled>Revoir</button><button class="btn ghost" id="pgNx" disabled>Suivant →</button><button class="btn ghost" id="pgCo" disabled>Correction</button><span class="status">Touches : → suivant · R revoir</span>`;
+  const ths=selThemes(),cur=state.text;
+  const wk=cur&&cur.s&&cur.n==='CE2'&&THEMES[cur.th].semaines?THEMES[cur.th].semaines[cur.s]:null;
+  const motsPool=wk||ths.flatMap(t=>t.mots.concat(state.niv==='CE2'&&t.semaines?Object.values(t.semaines).flat():[]));
+  const petit=cur;
+  this.items=[...sample(motsPool,3).map(x=>({k:'Mot',c:'mot',x})),
+   ...sample(ths.flatMap(t=>t.groupes),2).map(x=>({k:'Groupe de mots',c:'groupe',x})),
+   ...sample(ths.flatMap(t=>t.phrases),2).map(x=>({k:'Phrase',c:'phrase',x})),
+   {k:'Petit texte',c:'texte',x:excerpt(petit)}];
+  this.i=-1;this.phase='idle';
+  body.innerHTML=`<div class="intro"><p class="big">8 étapes</p><p>3 mots → 2 groupes de mots → 2 phrases → 1 petit texte</p><p class="muted">Le modèle s'affiche quelques secondes, puis s'efface : on l'écrit de mémoire.</p></div>`;
+  $('#pgGo').onclick=()=>{if(this.phase==='idle'){this.i=0;this.show();}else{initAct();A.i=0;A.show();}};
+  $('#pgRe').onclick=()=>this.again();
+  $('#pgNx').onclick=()=>this.next();
+  $('#pgCo').onclick=()=>this.correction();
+ },
+ hl(x){return [...x].map(c=>/\p{Lu}/u.test(c)?`<mark class="hl-maj">${esc(c)}</mark>`:/[.!?,;:«»]/.test(c)?`<mark class="hl-pt">${esc(c)}</mark>`:c==='\n'?'<br>':esc(c)).join('');},
+ correction(){
+  if(this.phase!=='end'&&this.phase!=='corr')return;this.phase='corr';
+  body.innerHTML=`<div class="corr-top"><p class="result" style="margin:0">Correction</p><span class="legend"><mark class="hl-maj">M</mark> majuscules &nbsp; <mark class="hl-pt">.</mark> ponctuation</span></div><div class="corr">${this.items.map(it=>`<div class="corr-row"><span class="corr-k">${it.c==='groupe'?'Groupe':it.c==='texte'?'Texte':it.k}</span><span class="corr-x">${this.hl(it.x)}</span></div>`).join('')}</div>`;
+ },
+ steps(){return `<div class="steps">${this.items.map((it,j)=>`<span class="step ${j<this.i?'done':''} ${j===this.i?'on':''}">${it.c==='groupe'?'Groupe':it.c==='texte'?'Texte':it.k}</span>`).join('')}</div>`;},
+ show(){
+  stopAll();const it=this.items[this.i];this.phase='show';
+  const dur=Math.round(+$('#pgT').value*1000*Math.min(9,Math.max(1,wordCount(it.x)/2.5)));
+  body.innerHTML=this.steps()+`<div class="pg-zone"><div class="pg-item k-${it.c}">${nl(esc(it.x))}</div></div><div class="bar"><i id="pgBar"></i></div>`;
+  $('#pgRe').disabled=true;$('#pgNx').disabled=true;$('#pgCo').disabled=true;$('#pgGo').textContent='Recommencer';
+  later(()=>{const b=$('#pgBar');if(b){b.style.transition=`width ${dur}ms linear`;b.style.width='0%';}},50);
+  later(()=>this.hide(),dur+50);
+ },
+ hide(){
+  this.phase='write';const last=this.i===this.items.length-1;
+  body.innerHTML=this.steps()+`<div class="pg-zone"><div class="pg-write">À toi d'écrire&nbsp;!<small>${this.items[this.i].k} · écris de mémoire, sans regarder</small></div></div>`;
+  $('#pgRe').disabled=false;$('#pgNx').disabled=false;$('#pgNx').textContent=last?'Terminer':'Suivant →';
+ },
+ again(){if(this.phase==='write')this.show();},
+ next(){
+  if(this.phase==='idle'){this.i=0;this.show();return;}
+  if(this.phase!=='write')return;
+  if(this.i<this.items.length-1){this.i++;this.show();}
+  else{this.phase='end';
+   body.innerHTML=`<div class="intro"><p class="big">Bravo&nbsp;!</p><p>Tu as écrit les 8 modèles de mémoire.</p><button class="btn" id="pgCo2" style="font-size:calc(clamp(17px,1.8vw,26px)*var(--k));padding:.5em 1.2em;margin-top:10px">Voir la correction</button></div>`;
+   $('#pgCo2').onclick=()=>this.correction();
+   $('#pgNx').disabled=true;$('#pgRe').disabled=true;$('#pgCo').disabled=false;}
+ },
+ key(e){if(e.key==='ArrowRight'||e.key==='PageDown'){if(this.phase==='end')this.correction();else this.next();return true;}if(e.key==='r'||e.key==='R'){this.again();return true;}}
+},
+
+effacement:{name:'Texte qui s\'efface',desc:'Les mots disparaissent doucement, puis de plus en plus vite.',
+ consigne:'Copie le texte avant que les mots ne disparaissent.',usesText:true,
+ init(){
+  this.mode=this.mode||'mots';
+  ctl.innerHTML=sel('efU','Effacer',[['mots','Mot par mot'],['lettres','Lettre par lettre']],this.mode)+`<span id="efVw"></span>`+
+   sel('efA','Accélération',[[.96,'Douce'],[.92,'Moyenne'],[.87,'Forte']],.92)+
+   `<button class="btn" id="efGo">Démarrer</button><button class="btn ghost" id="efRz">Recommencer</button><span class="status" id="efSt"></span>`;
+  $('#efU').onchange=()=>{this.mode=$('#efU').value;initAct();};
+  const L=this.mode==='lettres';
+  $('#efVw').outerHTML=L?sel('efV','Départ',[[1.5,'Lent · 1,5 s'],[1,'Moyen · 1 s'],[.6,'Rapide · 0,6 s']],state.niv==='CE2'?1.5:1)
+                        :sel('efV','Départ',[[7,'Lent · 7 s'],[5,'Moyen · 5 s'],[3,'Rapide · 3 s']],state.niv==='CE2'?7:5);
+  body.innerHTML=`<div class="txt">${L?this.chars(state.text.x):wordsHtml(state.text.x)}</div>`;
+  this.ws=[...body.querySelectorAll(L?'.ch':'.w')];this.idx=0;this.run=false;this.cur=+$('#efV').value;this.st();
+  $('#efGo').onclick=()=>this.toggle();$('#efRz').onclick=()=>initAct();
+  $('#efV').onchange=()=>{if(this.idx===0){this.cur=+$('#efV').value;this.st();}};
+ },
+ chars(text){return text.split('\n').map(l=>l.split(/ +/).filter(Boolean).map(w=>`<span class="nw">${[...w].map(c=>`<span class="w ch">${esc(c)}</span>`).join('')}</span>`).join(' ')).join('<br>');},
+ st(){const L=this.mode==='lettres',u=L?'lettre':'mot';$('#efSt').textContent=`${this.idx} / ${this.ws.length} ${u}s effacé${L?'e':''}s · une${L?'':''} ${u} toutes les ${this.cur.toFixed(L?2:1).replace('.',',')} s`.replace('une mot','un mot');},
+ toggle(){
+  if(this.idx>=this.ws.length)return;
+  this.run=!this.run;$('#efGo').textContent=this.run?'Pause':'Reprendre';
+  if(this.run)later(()=>this.step(),this.cur*1000);else stopAll();
+ },
+ step(){
+  if(!this.run)return;
+  this.ws[this.idx++].classList.add('gone');
+  const L=this.mode==='lettres';
+  this.cur=Math.max(L?.12:.6,this.cur*Math.pow(+$('#efA').value,L?.25:1));this.st();
+  if(this.idx>=this.ws.length){this.run=false;$('#efGo').textContent='Terminé';$('#efGo').disabled=true;return;}
+  later(()=>this.step(),this.cur*1000);
+ },
+ key(e){if(e.key===' '){this.toggle();return true;}}
+},
+
+chrono:{name:'Copie chronométrée',desc:'Un compte à rebours, puis on compte les mots copiés.',
+ consigne:'Copie le plus soigneusement possible avant la fin du temps.',usesText:true,
+ init(){
+  ctl.innerHTML=sel('chD','Durée',[2,3,5,8,10].map(v=>[v,v+' min']),5)+
+   `<button class="btn" id="chGo">Démarrer</button><button class="btn ghost" id="chRz">Réinitialiser</button><label><input type="checkbox" id="chS" checked> Son à la fin</label>`;
+  this.total=+$('#chD').value*60000;this.rem=this.total;this.run=false;this.done=false;
+  body.innerHTML=`<div class="chrono-row"><div class="clock" id="chC"></div><div class="chrono-info" id="chI">${wordCount(state.text.x)} mots dans ce texte</div></div><div class="txt" id="chT">${wordsHtml(state.text.x)}</div><div class="result" id="chR" hidden></div>`;
+  this.ws=[...body.querySelectorAll('.w')];this.draw();
+  $('#chD').onchange=()=>{if(!this.run&&this.rem===this.total){this.total=+$('#chD').value*60000;this.rem=this.total;this.draw();}};
+  $('#chGo').onclick=()=>this.toggle();$('#chRz').onclick=()=>initAct();
+  $('#chT').onclick=e=>{if(this.run)return;if(this.rem===this.total)return;const w=e.target.closest('.w');if(w)this.mark(+w.dataset.i);};
+ },
+ fmt(ms){const s=Math.ceil(ms/1000);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');},
+ draw(){const c=$('#chC');c.textContent=this.fmt(this.rem);c.classList.toggle('warn',this.rem<30000&&this.rem>0);c.classList.toggle('over',this.rem<=0);},
+ toggle(){
+  if(this.rem<=0)return;
+  if(this.run){this.run=false;stopAll();this.rem=Math.max(0,this.endAt-Date.now());$('#chGo').textContent='Reprendre';
+   $('#chT').classList.add('counting');$('#chI').textContent='En pause · clique sur le dernier mot copié pour compter.';}
+  else{
+   if($('#chS').checked){try{this.ac=this.ac||new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}
+   this.run=true;this.endAt=Date.now()+this.rem;$('#chGo').textContent='Pause';$('#chT').classList.remove('counting');
+   $('#chI').textContent=`${wordCount(state.text.x)} mots dans ce texte`;
+   every(()=>this.tick(),200);
+  }
+ },
+ tick(){
+  this.rem=Math.max(0,this.endAt-Date.now());this.draw();
+  if(this.rem<=0){stopAll();this.run=false;this.done=true;$('#chGo').disabled=true;$('#chGo').textContent='Temps écoulé';
+   $('#chT').classList.add('counting');$('#chI').textContent='Temps écoulé ! Clique sur le dernier mot copié.';this.beep();}
+ },
+ mark(i){
+  this.ws.forEach((w,j)=>w.classList.toggle('got',j<=i));
+  const n=this.ws.slice(0,i+1).filter(w=>/[\p{L}\d]/u.test(w.textContent)).length;
+  const min=(this.total-this.rem)/60000;const r=$('#chR');r.hidden=false;
+  r.textContent=`${n} mots copiés en ${this.fmt(this.total-this.rem)} · ${min>0?(n/min).toFixed(1).replace('.',','):'–'} mots par minute`;
+ },
+ beep(){
+  if(!this.ac||!$('#chS').checked)return;
+  try{const t=this.ac.currentTime;[0,.35,.7].forEach((d,k)=>{const o=this.ac.createOscillator(),g=this.ac.createGain();o.frequency.value=[660,660,880][k];o.connect(g);g.connect(this.ac.destination);g.gain.setValueAtTime(.0001,t+d);g.gain.exponentialRampToValueAtTime(.25,t+d+.03);g.gain.exponentialRampToValueAtTime(.0001,t+d+.3);o.start(t+d);o.stop(t+d+.32);});}catch(e){}
+ },
+ key(e){if(e.key===' '){this.toggle();return true;}}
+},
+
+lettres:{name:'Lettres manquantes',desc:'Recopier le texte en retrouvant les lettres cachées.',
+ consigne:'Recopie le texte en complétant les lettres manquantes.',usesText:true,
+ init(){
+  ctl.innerHTML=sel('ltM','Lettres cachées',[['hasard','Au hasard'],['voyelles','Les voyelles'],['accents','Les lettres accentuées'],['fins','Les fins de mots']],'hasard')+
+   sel('ltQ','Quantité',[[0,'Peu'],[1,'Moyen'],[2,'Beaucoup']],state.niv==='CE2'?0:1)+
+   `<button class="btn" id="ltN">Nouveau tirage</button><button class="btn ghost" id="ltS">Montrer les réponses</button>`;
+  const draw=()=>{const m=$('#ltM').value;$('#ltQ').disabled=m==='accents';body.classList.remove('show');$('#ltS').textContent='Montrer les réponses';$('#ltS').classList.remove('on');
+   body.innerHTML=`<div class="txt">${this.gaps(state.text.x,m,+$('#ltQ').value)}</div>`;};
+  $('#ltM').onchange=draw;$('#ltQ').onchange=draw;$('#ltN').onclick=draw;
+  toggleShow($('#ltS'),'Montrer les réponses','Cacher les réponses');draw();
+ },
+ gaps(text,m,q){
+  const P={hasard:[.12,.2,.32],voyelles:[.3,.55,.85],fins:[.3,.55,.85]}[m],p=P?P[q]:1;
+  const VOW='aeiouyàâäéèêëîïôöùûüÿœæ',ACC='àâäéèêëîïôöùûüÿç';
+  return text.split('\n').map(line=>line.split(/ +/).filter(Boolean).map(w=>{
+   const ch=[...w],L=ch.map((c,k)=>/\p{L}/u.test(c)?k:-1).filter(k=>k>=0),hide=new Set();
+   if(m==='hasard')L.forEach((k,j)=>{if(j>0&&Math.random()<p)hide.add(k);});
+   if(m==='voyelles')L.forEach(k=>{if(VOW.includes(ch[k].toLowerCase())&&Math.random()<p)hide.add(k);});
+   if(m==='accents')L.forEach(k=>{if(ACC.includes(ch[k].toLowerCase()))hide.add(k);});
+   if(m==='fins'&&L.length>=4&&Math.random()<p)L.slice(L.length>6?-2:-1).forEach(k=>hide.add(k));
+   return `<span class="nw">${ch.map((c,k)=>hide.has(k)?`<span class="gap"><span class="ans">${esc(c)}</span></span>`:esc(c)).join('')}</span>`;
+  }).join(' ')).join('<br>');
+ }
+},
+
+melange:{name:'Mots mélangés',desc:'Remettre les mots dans l\'ordre et copier la phrase.',
+ consigne:'Remets les mots dans l\'ordre, puis copie chaque phrase. La majuscule t\'indique le premier mot.',usesText:false,
+ init(){
+  ctl.innerHTML=sel('mxN','Phrases',[1,2,3,4].map(v=>[v,v]),3)+`<button class="btn" id="mxNew">Nouvelles phrases</button><button class="btn ghost" id="mxS">Montrer la solution</button>`;
+  const draw=()=>{body.classList.remove('show');$('#mxS').textContent='Montrer la solution';$('#mxS').classList.remove('on');
+   body.innerHTML=sample(themePhrases(),+$('#mxN').value).map((p,k)=>{
+    const toks=p.split(/ +/);let punct='';const m=toks[toks.length-1].match(/^(.*?) ?([.!?])$/);
+    if(m){toks[toks.length-1]=m[1];punct=m[2];}
+    let sh=toks.slice(),n=0;do{shuffle(sh);n++;}while(sh.join(' ')===toks.join(' ')&&n<20&&toks.length>1);
+    return `<div class="mx"><span class="mx-n">${k+1}</span><div class="mx-tiles">${sh.map(t=>`<span class="tile">${esc(t)}</span>`).join('')}${punct?`<span class="tile punct">${punct}</span>`:''}</div><div class="mx-sol">${esc(p)}</div></div>`;
+   }).join('');};
+  $('#mxNew').onclick=draw;$('#mxN').onchange=draw;toggleShow($('#mxS'),'Montrer la solution','Cacher la solution');draw();
+ }
+},
+
+colles:{name:'Mots collés',desc:'Séparer les mots en recopiant le texte.',
+ consigne:'Recopie le texte en séparant correctement les mots.',usesText:true,
+ init(){
+  ctl.innerHTML=`<button class="btn ghost" id="clS">Montrer la solution</button><span class="status">Une ligne par phrase${state.text.g==='poeme'?' (ici, une ligne par vers)':''}.</span>`;
+  body.innerHTML=units(state.text).map(u=>`<div class="cl"><div class="cl-q">${esc(u.replace(/[  ]/g,''))}</div><div class="cl-sol">${esc(u)}</div></div>`).join('');
+  toggleShow($('#clS'),'Montrer la solution','Cacher la solution');
+ }
+},
+
+lampe:{name:'Lampe de poche',desc:'Un groupe de mots s\'éclaire à la fois : on copie au rythme.',
+ consigne:'Copie le groupe de mots éclairé avant qu\'il ne change.',usesText:true,
+ init(){
+  ctl.innerHTML=sel('lpG','Mots par groupe',[1,2,3,4,5].map(v=>[v,v]),state.niv==='CE2'?2:3)+
+   sel('lpD','Durée',[3,4,6,8,10,15].map(v=>[v,v+' s']),state.niv==='CE2'?8:6)+
+   `<button class="btn" id="lpGo">Démarrer</button><button class="btn ghost" id="lpP" aria-label="Groupe précédent">←</button><button class="btn ghost" id="lpN" aria-label="Groupe suivant">→</button><button class="btn ghost" id="lpRz">Recommencer</button><span class="status" id="lpSt"></span>`;
+  body.innerHTML=`<div class="txt">${wordsHtml(state.text.x)}</div>`;
+  this.ws=[...body.querySelectorAll('.w')];this.g=-1;this.run=false;this.calc();
+  $('#lpGo').onclick=()=>this.toggle();$('#lpP').onclick=()=>this.prev();$('#lpN').onclick=()=>this.next();$('#lpRz').onclick=()=>initAct();
+  $('#lpG').onchange=()=>{this.calc();if(this.g>=0)this.light();};
+ },
+ calc(){this.size=+$('#lpG').value;this.ng=Math.ceil(this.ws.length/this.size);if(this.g>=this.ng)this.g=this.ng-1;$('#lpSt').textContent=this.g<0?`${this.ng} groupes`:`Groupe ${this.g+1} / ${this.ng}`;},
+ light(){body.classList.add('lamp-on');this.ws.forEach((w,j)=>{const gi=Math.floor(j/this.size);w.classList.toggle('lit',gi===this.g);w.classList.toggle('past',gi<this.g);});$('#lpSt').textContent=`Groupe ${this.g+1} / ${this.ng}`;},
+ sched(){stopAll();later(()=>this.next(),+$('#lpD').value*1000);},
+ next(){
+  if(this.g<this.ng-1){this.g++;this.light();if(this.run)this.sched();}
+  else{this.run=false;stopAll();body.classList.remove('lamp-on');$('#lpGo').textContent='Démarrer';$('#lpSt').textContent='Terminé · relis ta copie';this.g=-1;}
+ },
+ prev(){if(this.g>0){this.g--;this.light();if(this.run)this.sched();}},
+ toggle(){if(!this.run){this.run=true;$('#lpGo').textContent='Pause';if(this.g<0)this.next();else this.sched();}else{this.run=false;stopAll();$('#lpGo').textContent='Reprendre';}},
+ key(e){if(e.key==='ArrowRight'||e.key==='PageDown'){this.next();return true;}if(e.key==='ArrowLeft'||e.key==='PageUp'){this.prev();return true;}if(e.key===' '){this.toggle();return true;}}
+},
+
+capitales:{name:'Des capitales à la cursive',desc:'Transcrire un texte écrit en capitales en écriture cursive.',
+ consigne:'Recopie ce texte en écriture cursive : attention aux majuscules et aux accents.',usesText:true,
+ init(){
+  ctl.innerHTML=`<button class="btn ghost" id="cpS">Montrer le modèle en cursive</button>`;
+  body.innerHTML=`<div class="txt caps">${nl(esc(state.text.x.toUpperCase()))}</div><div class="txt cp-model cursive-f">${nl(esc(state.text.x))}</div>`;
+  toggleShow($('#cpS'),'Montrer le modèle en cursive','Cacher le modèle');
+ }
+}
+};
+
+/* ===================== INTERFACE ===================== */
+let A=null;
+function initAct(){
+  stopAll();const a=ACTS[state.act];A=a;
+  $('#consigne').textContent=a.consigne;ctl.innerHTML='';body.innerHTML='';body.className='body';
+  a.init();label();
+  document.querySelectorAll('.act').forEach(b=>b.classList.toggle('on',b.dataset.a===state.act));
+}
+function label(){
+  const a=ACTS[state.act],t=state.text,thn=state.theme==='tous'?'Tous les thèmes':THEMES[state.theme].nom;
+  const warn=mineOnlyEmpty()?' <span>· aucun texte perso pour ce thème, textes de l\'atelier affichés</span>':'';
+  $('#txtLbl').innerHTML=(a.usesText?`<b>${esc(t.t)}</b>${t.mine?'<span class="minetag">Mon texte</span>':''}<span>${t.s?'Semaine '+t.s+' · ':''}${GENRES[t.g]} · ${t.n} · ${THEMES[t.th].nom}</span>`:`<b>Phrases du thème</b><span>${esc(thn)}</span>`)+warn;
+  $('#txtNew').hidden=!a.usesText;$('#txtPick').hidden=!a.usesText;
+  if(a.usesText){
+    const list=pool().slice();if(!list.includes(t))list.unshift(t);
+    list.sort((x,y)=>(x.s||99)-(y.s||99)||x.t.localeCompare(y.t,'fr'));
+    $('#txtPick').innerHTML=list.map(x=>`<option value="${esc(x.id)}" ${x===t?'selected':''}>${x.s?'Sem. '+x.s+' · ':''}${esc(x.t)} (${x.n})</option>`).join('');
+  }
+}
+function renderThemes(){
+  $('#themes').innerHTML=[['tous','Tous les thèmes','var(--seyes)'],...Object.entries(THEMES).map(([k,t])=>[k,t.nom,t.c])]
+   .map(([k,n,c])=>`<button class="chip ${k===state.theme?'on':''}" data-th="${k}" style="--c:${c}">${n}</button>`).join('');
+}
+function renderGenres(){
+  const present=[...new Set(basePool().filter(t=>t.n===state.niv).map(t=>t.g))];
+  if(state.genre!=='tous'&&!present.includes(state.genre))state.genre='tous';
+  $('#genres').innerHTML=[['tous','Tous les types'],...Object.keys(GENRES).filter(g=>present.includes(g)).map(g=>[g,GENRES[g]])]
+   .map(([g,n])=>`<button class="chip plain ${g===state.genre?'on':''}" data-g="${g}">${n}</button>`).join('');
+  document.querySelectorAll('#niv button').forEach(b=>b.classList.toggle('on',b.dataset.n===state.niv));
+  document.querySelectorAll('#src button').forEach(b=>b.classList.toggle('on',b.dataset.s===state.src));
+}
+function onFilter(){state.text=pickText();renderThemes();renderGenres();initAct();genSheets();save();}
+
+$('#acts').innerHTML=Object.entries(ACTS).map(([k,a])=>`<button class="act" data-a="${k}"><b>${a.name}</b><span>${a.desc}</span></button>`).join('');
+$('#acts').onclick=e=>{const b=e.target.closest('.act');if(!b)return;state.act=b.dataset.a;initAct();save();};
+$('#themes').onclick=e=>{const b=e.target.closest('[data-th]');if(!b)return;state.theme=b.dataset.th;state.genre='tous';onFilter();};
+$('#genres').onclick=e=>{const b=e.target.closest('[data-g]');if(!b)return;state.genre=b.dataset.g;onFilter();};
+$('#src').onclick=e=>{const b=e.target.closest('[data-s]');if(!b)return;state.src=b.dataset.s;onFilter();};
+$('#niv').onclick=e=>{const b=e.target.closest('[data-n]');if(!b)return;state.niv=b.dataset.n;onFilter();};
+$('#txtPick').onchange=()=>{const id=$('#txtPick').value;const t=ALL.concat(MINE).find(x=>x.id===id);if(t){state.text=t;initAct();}};
+$('#txtNew').onclick=()=>{state.text=pickText();initAct();};
+
+const stage=$('#stage');
+function applyStage(){
+  stage.style.setProperty('--k',state.k);
+  stage.classList.toggle('cursive',state.cursive);
+  stage.classList.toggle('vert',state.board==='vert');stage.classList.toggle('blanc',state.board==='blanc');
+  document.querySelectorAll('#font button').forEach(b=>b.classList.toggle('on',(b.dataset.f==='cursive')===state.cursive));
+  document.querySelectorAll('#board button').forEach(b=>b.classList.toggle('on',b.dataset.b===state.board));
+}
+$('#font').onclick=e=>{const b=e.target.closest('button');if(!b)return;state.cursive=b.dataset.f==='cursive';applyStage();save();};
+$('#board').onclick=e=>{const b=e.target.closest('button');if(!b)return;state.board=b.dataset.b;applyStage();save();};
+$('#smaller').onclick=()=>{state.k=Math.max(.6,+(state.k-.1).toFixed(1));applyStage();save();};
+$('#bigger').onclick=()=>{state.k=Math.min(2,+(state.k+.1).toFixed(1));applyStage();save();};
+const sw=$('#stageWrap');
+function toggleFs(){
+  if(document.fullscreenElement){document.exitFullscreen().catch(()=>{});return;}
+  if(sw.classList.contains('pseudo-fs')){sw.classList.remove('pseudo-fs');$('#fs').textContent='Plein écran';return;}
+  const r=sw.requestFullscreen?sw.requestFullscreen():Promise.reject();
+  r.catch(()=>{sw.classList.add('pseudo-fs');$('#fs').textContent='Quitter le plein écran';});
+}
+$('#fs').onclick=toggleFs;
+document.addEventListener('fullscreenchange',()=>{$('#fs').textContent=document.fullscreenElement?'Quitter le plein écran':'Plein écran';});
+
+document.addEventListener('keydown',e=>{
+  if(state.tab!=='proj'||/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;
+  if(e.key==='Escape'&&sw.classList.contains('pseudo-fs')){toggleFs();return;}
+  if(e.key===' '&&e.target.tagName==='BUTTON')return;
+  if(A&&A.key&&A.key(e))e.preventDefault();
+});
+
+$('#tabs').onclick=e=>{
+  const b=e.target.closest('[data-tab]');if(!b)return;state.tab=b.dataset.tab;
+  document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x===b));
+  showTab();
+};
+function showTab(){
+  document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x.dataset.tab===state.tab));
+  $('#proj').hidden=state.tab!=='proj';$('#print').hidden=state.tab!=='print';$('#mine').hidden=state.tab!=='mine';
+  document.querySelector('.filters').hidden=state.tab==='mine';
+  if(state.tab!=='proj')initAct();
+  if(state.tab==='print')genSheets();
+};
+
+/* ===================== IMPRESSION ===================== */
+function genSheets(){
+  const kind=$('#prKind').value;
+  document.querySelectorAll('.onlyTx').forEach(el=>el.hidden=kind!=='textes');
+  $('#prFlashNote').hidden=kind!=='flash';
+  if(kind==='flash'){
+    const pages=+$('#prPages').value;
+    const rows=[['Mot 1','l1'],['Mot 2','l1'],['Mot 3','l1'],['Groupe de mots 1','l1'],['Groupe de mots 2','l1'],['Phrase 1','l2'],['Phrase 2','l2'],['Petit texte','l4']];
+    const half=`<div class="half"><div class="fl-head"><h3>Mémoire flash</h3><span>Prénom : ……………………… &nbsp; Date : ………………</span></div>
+      <p class="fl-sub">J'écris de mémoire. Quand le modèle revient, je coche si c'est juste, sinon je corrige à droite.</p>
+      <table class="fl"><colgroup><col style="width:19mm"><col><col style="width:9mm"><col></colgroup>
+      <thead><tr><th>Étape</th><th>J'écris de mémoire</th><th>✓</th><th>Je corrige</th></tr></thead><tbody>
+      ${rows.map(([l,h])=>`<tr><td class="lab">${l}</td><td><div class="ln ${h}"></div></td><td class="ck"><span></span></td><td><div class="ln ${h}"></div></td></tr>`).join('')}
+      </tbody></table>
+      <div class="fl-bilan"><span>Justes du premier coup : …… / 8</span><span>J'ai revu le modèle : …… fois</span><span>Mon écriture : ☐ soignée &nbsp;☐ à améliorer</span></div></div>`;
+    let html='';for(let p=0;p<pages;p++)html+=`<div class="sheet">${half}${half}</div>`;
+    $('#sheets').innerHTML=html;return;
+  }
+  const per=+$('#prPer').value,pages=+$('#prPages').value,need=per*pages;
+  let list=shuffle(pool().slice());
+  const add=arr=>{shuffle(arr.filter(t=>!list.includes(t))).forEach(t=>list.push(t));};
+  if(list.length<need)add(basePool());
+  if(list.length<need)add(ALL.filter(t=>t.n===state.niv));
+  while(list.length<need)list=list.concat(list);
+  list=list.slice(0,need);
+  const cur=state.prCursive;
+  const half=t=>{
+   const long=wordCount(t.x)>(cur?60:80)&&per===2;
+   return `<div class="half"><div class="hd"><span class="tag">${t.s?'Semaine '+t.s+' · ':''}${GENRES[t.g]} · ${t.n} · ${THEMES[t.th].nom}</span></div>
+   <h3>${esc(t.t)}</h3><div class="model ${cur?'cursive':''} ${long?'long':''} ${per===1?'solo':''}">${esc(t.x)}</div></div>`;
+  };
+  let html='';for(let p=0;p<pages;p++)html+=`<div class="sheet">${list.slice(p*per,p*per+per).map(half).join('')}</div>`;
+  $('#sheets').innerHTML=html;
+  document.querySelectorAll('#prFont button').forEach(b=>b.classList.toggle('on',(b.dataset.f==='cursive')===cur));
+}
+$('#prFont').onclick=e=>{const b=e.target.closest('button');if(!b)return;state.prCursive=b.dataset.f==='cursive';genSheets();save();};
+['prKind','prPer','prPages'].forEach(id=>$('#'+id).onchange=genSheets);
+$('#prNew').onclick=genSheets;
+
+/* ===================== MES TEXTES ===================== */
+const LKEY='atelier-copie-mes-textes';
+let store=null,editId=null,armed=null;
+const norm=d=>({id:d.id,th:THEMES[d.th]?d.th:'animaux',n:d.n==='CM2'?'CM2':'CE2',g:GENRES[d.g]?d.g:'recit',t:fr(String(d.t||'Sans titre')),x:fr(String(d.x||'').replace(/\r/g,'').replace(/[ \t]+/g,' ').replace(/ *\n */g,'\n').trim()),raw:d,mine:true,at:d.at||0});
+$('#mfTh').innerHTML=Object.entries(THEMES).map(([k,t])=>`<option value="${k}">${t.nom}</option>`).join('');
+$('#mfG').innerHTML=Object.entries(GENRES).map(([k,g])=>`<option value="${k}">${g}</option>`).join('');
+function resetForm(){editId=null;$('#mf').reset();$('#mfTh').value=state.theme==='tous'?'animaux':state.theme;$('#mfN').value=state.niv;$('#mfTitle').textContent='Ajouter un texte';$('#mfSave').textContent='Enregistrer le texte';$('#mfCancel').hidden=true;}
+function renderMine(){
+  $('#nbMine').textContent=MINE.length;
+  const list=MINE.slice().sort((a,b)=>(b.at||0)-(a.at||0));
+  $('#mlist').innerHTML=list.length?list.map(t=>`<div class="mitem" data-id="${esc(t.id)}"><b>${esc(t.t)}</b>
+    <div class="meta"><i style="--c:${THEMES[t.th].c}"></i>${THEMES[t.th].nom} · ${t.n} · ${GENRES[t.g]} · ${wordCount(t.x)} mots</div>
+    <p>${esc(t.x)}</p>
+    <div class="acts2"><button class="btn" data-do="use">Projeter</button><button class="btn ghost" data-do="edit">Modifier</button><button class="btn danger" data-do="del">Supprimer</button></div></div>`).join('')
+   :`<p class="empty">Aucun texte pour l'instant. Ajoutez votre premier texte avec le formulaire : il apparaîtra ici et dans les activités du thème choisi.</p>`;
+}
+function refreshMine(){
+  renderMine();renderGenres();
+  const gone=state.text&&state.text.mine&&!MINE.some(t=>t.id===state.text.id);
+  if(gone||(state.src==='mine'&&!state.text?.mine&&MINE.some(inTheme))){state.text=pickText();initAct();}
+  else label();
+  if(state.tab==='print')genSheets();
+}
+function saveLocal(){try{localStorage.setItem(LKEY,JSON.stringify(MINE.map(t=>t.raw)));}catch(e){}}
+try{MINE=JSON.parse(localStorage.getItem(LKEY)||'[]').map(norm);}catch(e){MINE=[];}
+
+$('#mf').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const d={th:$('#mfTh').value,n:$('#mfN').value,g:$('#mfG').value,t:$('#mfT').value.trim(),x:$('#mfX').value.trim(),at:Date.now()};
+  if(!d.x){$('#mfMsg').textContent='Ajoutez le texte avant d\'enregistrer.';return;}
+  if(!d.t)d.t=d.x.split(/\s+/).slice(0,5).join(' ')+'…';
+  const btn=$('#mfSave');btn.disabled=true;
+  try{
+    if(store){
+      if(editId)await store.doc(editId).set(d);else await store.add(d);
+    }else{
+      const id=editId||('t'+Date.now().toString(36)+Math.random().toString(36).slice(2,6));
+      const item=norm({...d,id});const i=MINE.findIndex(t=>t.id===id);
+      if(i>=0)MINE[i]=item;else MINE.push(item);saveLocal();refreshMine();
+    }
+    $('#mfMsg').textContent=editId?'Texte modifié.':`« ${d.t} » est enregistré dans le thème ${THEMES[d.th].nom}.`;
+    resetForm();
+  }catch(err){$('#mfMsg').textContent='L\'enregistrement n\'a pas abouti ('+(err&&err.code||'erreur')+'). Vérifiez votre connexion puis réessayez.';}
+  btn.disabled=false;
+});
+$('#mfCancel').onclick=()=>{resetForm();$('#mfMsg').textContent='';};
+$('#mlist').onclick=async e=>{
+  const b=e.target.closest('[data-do]');if(!b)return;
+  const id=b.closest('.mitem').dataset.id,t=MINE.find(x=>x.id===id);if(!t)return;
+  if(b.dataset.do==='use'){state.theme=t.th;state.niv=t.n;state.genre='tous';renderThemes();renderGenres();state.text=t;initAct();genSheets();save();state.tab='proj';showTab();window.scrollTo({top:0});}
+  if(b.dataset.do==='edit'){editId=id;const r=t.raw;$('#mfTh').value=t.th;$('#mfN').value=t.n;$('#mfG').value=t.g;$('#mfT').value=r.t||'';$('#mfX').value=r.x||'';
+    $('#mfTitle').textContent='Modifier le texte';$('#mfSave').textContent='Enregistrer les modifications';$('#mfCancel').hidden=false;$('#mfMsg').textContent='';$('#mfT').focus();}
+  if(b.dataset.do==='del'){
+    if(armed!==id){document.querySelectorAll('.danger.armed').forEach(x=>{x.classList.remove('armed');x.textContent='Supprimer';});armed=id;b.classList.add('armed');b.textContent='Confirmer la suppression';return;}
+    armed=null;
+    try{ if(store)await store.doc(id).delete(); else{MINE=MINE.filter(x=>x.id!==id);saveLocal();refreshMine();} if(editId===id)resetForm(); }
+    catch(err){$('#mfMsg').textContent='La suppression n\'a pas abouti. Réessayez.';}
+  }
+};
+async function connectStore(){
+  let db=null;
+  try{db=window.claude&&window.claude.use?await window.claude.use('db'):null;}catch(e){db=null;}
+  if(!db){$('#storeNote').textContent='Vos textes sont gardés dans ce navigateur. Ils s\'ajoutent à ceux du thème choisi, en projection comme à l\'impression.';return;}
+  store=db.collection('mestextes');
+  const local=MINE.slice();let first=true;
+  store.onSnapshot(snap=>{
+    MINE=snap.docs.map(d=>norm({id:d.id,...d.data()}));
+    if(first){first=false;if(snap.empty&&local.length){local.forEach(t=>{const r={...t.raw};delete r.id;store.add(r).catch(()=>{});});}}
+    refreshMine();
+  },()=>{$('#storeNote').textContent='Connexion aux textes enregistrés interrompue. Rechargez la page pour les retrouver.';});
+  $('#storeNote').textContent='Vos textes sont enregistrés avec la page et vous suivent sur tous vos appareils. Ils s\'ajoutent à ceux du thème choisi, en projection comme à l\'impression.';
+}
+
+/* ===================== DÉMARRAGE ===================== */
+renderThemes();renderGenres();state.text=pickText();applyStage();initAct();genSheets();resetForm();renderMine();connectStore();
+</script>
