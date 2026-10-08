@@ -845,14 +845,46 @@ diff:{name:'Copie différenciée',desc:'Le même texte en trois longueurs, pour 
  consigne:'Copie la version de ton groupe.',usesText:true,
  init(){
   this.v=this.v||'tous';
-  ctl.innerHTML=sel('dfV','Afficher',[['tous','Les 3 versions côte à côte'],['0','Version courte ★'],['1','Version moyenne ★★'],['2','Version longue ★★★']],this.v)+`<span class="status">Les versions suivent l'ordre du texte : chaque groupe copie le début, plus ou moins long.</span>`;
+  this.mode=this.mode||'rebours';this.min=this.min||5;
+  ctl.innerHTML=sel('dfV','Afficher',[['tous','Les 3 versions côte à côte'],['0','Version courte ★'],['1','Version moyenne ★★'],['2','Version longue ★★★']],this.v)+
+   sel('dfM','Chrono',[['rebours','Compte à rebours'],['libre','Temps qui passe'],['aucun','Sans chrono']],this.mode)+
+   `<span id="dfDw">${sel('dfD','Durée',[2,3,5,8,10,15].map(v=>[v,v+' min']),this.min)}</span>`+
+   `<button class="btn" id="dfGo">Démarrer</button><button class="btn ghost" id="dfRz">Réinitialiser</button><label><input type="checkbox" id="dfS" checked> Son à la fin</label>`;
+  body.innerHTML=`<div class="chrono-row" id="dfCR"><div class="clock" id="dfC"></div><div class="chrono-info" id="dfI"></div></div><div id="dfB"></div>`;
   $('#dfV').onchange=()=>{this.v=$('#dfV').value;this.draw();};
-  this.draw();
+  $('#dfM').onchange=()=>{this.mode=$('#dfM').value;initAct();};
+  $('#dfD').onchange=()=>{this.min=+$('#dfD').value;if(!this.run){this.reset();}};
+  $('#dfGo').onclick=()=>this.toggle();$('#dfRz').onclick=()=>{stopAll();this.reset();};
+  this.reset();this.draw();
  },
+ reset(){
+  this.run=false;this.el=0;this.total=this.min*60000;this.done=false;
+  const none=this.mode==='aucun';
+  $('#dfCR').hidden=none;$('#dfDw').hidden=this.mode!=='rebours';
+  ['dfGo','dfRz'].forEach(id=>$('#'+id).hidden=none);$('#dfS').parentElement.hidden=this.mode!=='rebours';
+  $('#dfGo').disabled=false;$('#dfGo').textContent='Démarrer';$('#dfC').classList.remove('warn','over');
+  $('#dfI').textContent=this.mode==='rebours'?'Même temps pour les trois groupes':'Chaque groupe note le temps quand il a fini';
+  this.tick(true);
+ },
+ fmt(ms){const s=Math.max(0,Math.ceil(ms/1000));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');},
+ toggle(){
+  if(this.done)return;
+  if(this.run){this.run=false;stopAll();this.el+=Date.now()-this.t0;$('#dfGo').textContent='Reprendre';return;}
+  if($('#dfS').checked&&this.mode==='rebours'){try{this.ac=this.ac||new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}
+  this.run=true;this.t0=Date.now();$('#dfGo').textContent='Pause';every(()=>this.tick(),200);
+ },
+ tick(still){
+  const el=this.el+(this.run&&!still?Date.now()-this.t0:0),c=$('#dfC');if(!c)return;
+  if(this.mode==='libre'){c.textContent=this.fmt(el);return;}
+  const rem=this.total-el;c.textContent=this.fmt(rem);c.classList.toggle('warn',rem<30000&&rem>0);
+  if(rem<=0&&this.run){stopAll();this.run=false;this.done=true;c.classList.add('over');$('#dfGo').textContent='Temps écoulé';$('#dfGo').disabled=true;$('#dfI').textContent='Temps écoulé ! Posez les crayons.';this.beep();}
+ },
+ beep(){if(!this.ac||!$('#dfS').checked)return;try{const t=this.ac.currentTime;[0,.35,.7].forEach((d,k)=>{const o=this.ac.createOscillator(),g=this.ac.createGain();o.frequency.value=[660,660,880][k];o.connect(g);g.connect(this.ac.destination);g.gain.setValueAtTime(.0001,t+d);g.gain.exponentialRampToValueAtTime(.25,t+d+.03);g.gain.exponentialRampToValueAtTime(.0001,t+d+.3);o.start(t+d);o.stop(t+d+.32);});}catch(e){}},
+ key(e){if(e.key===' '&&this.mode!=='aucun'){this.toggle();return true;}},
  draw(){
   const V=diffVersions(state.text),N=['Court','Moyen','Long'],S=['★','★★','★★★'];
   const panel=(k,cls)=>`<div class="df-p"><div class="df-h"><span class="df-s">${S[k]}</span> ${N[k]} · ${wordCount(V[k])} mots</div><div class="txt ${cls}">${nl(esc(V[k]))}</div></div>`;
-  body.innerHTML=this.v==='tous'?`<div class="df-g">${[0,1,2].map(k=>panel(k,'df-small')).join('')}</div>`:panel(+this.v,'');
+  $('#dfB').innerHTML=this.v==='tous'?`<div class="df-g">${[0,1,2].map(k=>panel(k,'df-small')).join('')}</div>`:panel(+this.v,'');
  }
 }
 };
