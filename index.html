@@ -163,6 +163,28 @@ mark.hl-pt{background:#ff8fb1;color:#1a1c2e;border-radius:.15em;padding:0 .12em;
 .stage.cursive .corr-x{font-family:var(--f-cursive);line-height:1.9}
 @media (max-width:560px){.corr-row{grid-template-columns:1fr}}
 
+.ds{display:flex;flex-direction:column}
+.ds-row{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:baseline;padding-block:10px;border-bottom:1px dashed var(--b-line)}
+.ds-l{font-family:var(--f-display);font-weight:800;color:var(--b-acc);font-size:calc(clamp(22px,2.4vw,36px)*var(--k))}
+.ds-x{font-size:calc(clamp(21px,2.35vw,38px)*var(--k));line-height:1.55;min-width:0}
+.stage.cursive .ds-x{font-family:var(--f-cursive);font-size:calc(clamp(18px,2vw,32px)*var(--k));line-height:2}
+.ds-n{visibility:hidden;font-family:var(--f-display);font-weight:800;color:var(--b-bg);background:var(--b-acc);border-radius:99px;min-width:1.7em;text-align:center;font-size:calc(clamp(16px,1.6vw,24px)*var(--k))}
+.show .ds-n{visibility:visible}
+.ds-sol{display:none;margin:0;font-family:var(--f-display);font-weight:700;color:var(--b-acc);font-size:calc(clamp(18px,2vw,30px)*var(--k))}
+.show .ds-sol{display:block}
+.spk{display:flex;flex-direction:column;align-items:center;gap:14px;color:var(--b-acc);font-family:var(--f-display);font-weight:700;font-size:calc(clamp(24px,3vw,44px)*var(--k))}
+.spk svg{width:calc(clamp(80px,10vw,150px)*var(--k));height:auto;animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.08);opacity:.75}}
+.df-g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+@media (max-width:760px){.df-g{grid-template-columns:1fr}}
+.df-p{display:flex;flex-direction:column;gap:8px;min-width:0}
+.df-g .df-p{border:1px solid var(--b-line);border-radius:12px;padding:14px}
+.df-h{font-family:var(--f-display);font-weight:700;color:var(--b-soft);font-size:calc(clamp(14px,1.3vw,19px)*var(--k))}
+.df-s{color:var(--b-acc);letter-spacing:.05em}
+.txt.df-small{font-size:calc(clamp(16px,1.45vw,26px)*var(--k));line-height:1.6}
+.stage.cursive .txt.df-small{font-size:calc(clamp(14px,1.3vw,23px)*var(--k));line-height:2}
+@media (prefers-reduced-motion:reduce){.spk svg{animation:none}}
+
 /* Plein écran */
 .stagewrap:fullscreen{background:var(--paper);padding:14px;overflow:auto}
 .stagewrap:fullscreen .stage{flex:1;min-height:0}
@@ -216,6 +238,15 @@ mark.hl-pt{background:#ff8fb1;color:#1a1c2e;border-radius:.15em;padding:0 .12em;
 .empty{color:var(--muted);font-size:14px;margin:0;padding:14px;border:1px dashed var(--line);border-radius:10px}
 .nb{display:inline-block;min-width:1.6em;padding:0 6px;border-radius:99px;background:var(--seyes-soft);color:var(--seyes);font-size:12px;text-align:center;margin-left:6px;font-variant-numeric:tabular-nums}
 .minetag{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--seyes);border:1px solid var(--seyes);border-radius:99px;padding:1px 7px;margin-left:6px;vertical-align:2px}
+
+/* Fiche différenciée */
+.df-sheet{gap:0}
+.df-t{font-family:var(--f-display);font-weight:700;font-size:15pt;margin:1.5mm 0 3mm;color:#1b1d2e}
+.df-part{padding-block:3mm 4mm;border-top:1px dashed #a9adc8}
+.df-ph{font-size:9.5pt;color:#5d6180;margin-bottom:1.5mm}
+.df-ph b{color:#4f55bf;letter-spacing:.05em}
+.model.df-m{font-size:13.5pt;line-height:1.65}
+.model.cursive.df-m{font-size:12pt;line-height:2.05}
 
 /* Fiche réponse Mémoire flash */
 .fl-head{display:flex;justify-content:space-between;align-items:baseline;gap:4mm;font-size:10pt;color:#3b3f5c}
@@ -296,7 +327,7 @@ mark.hl-pt{background:#ff8fb1;color:#1a1c2e;border-radius:.15em;padding:0 .12em;
   <section id="print" hidden>
     <div style="display:flex;flex-direction:column;gap:12px">
       <div class="prctl noprint">
-        <label for="prKind">Fiche <select id="prKind"><option value="textes">Textes à copier</option><option value="flash">Fiche réponse · Mémoire flash</option></select></label>
+        <label for="prKind">Fiche <select id="prKind"><option value="textes">Textes à copier</option><option value="flash">Fiche réponse · Mémoire flash</option><option value="diff">Copie différenciée · 3 versions</option></select></label>
         <label class="onlyTx">Modèle <span class="seg" id="prFont"><button data-f="cursive" class="on">Cursive</button><button data-f="script">Script</button></span></label>
         <label for="prPer" class="onlyTx">Textes par page <select id="prPer"><option value="2">2</option><option value="1">1</option></select></label>
         <label for="prPages">Pages <select id="prPages"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></label>
@@ -496,7 +527,19 @@ function pickText(){const p=pool();const q=p.length>1?p.filter(t=>t!==state.text
 let timers=[],ivs=[];
 const later=(f,ms)=>timers.push(setTimeout(f,ms));
 const every=(f,ms)=>ivs.push(setInterval(f,ms));
-function stopAll(){timers.forEach(clearTimeout);ivs.forEach(clearInterval);timers=[];ivs=[];}
+function stopAll(){timers.forEach(clearTimeout);ivs.forEach(clearInterval);timers=[];ivs=[];try{if(window.speechSynthesis)speechSynthesis.cancel();}catch(e){}}
+function hlText(x){return [...x].map(c=>/\p{Lu}/u.test(c)?`<mark class="hl-maj">${esc(c)}</mark>`:/[.!?,;:«»]/.test(c)?`<mark class="hl-pt">${esc(c)}</mark>`:c==='\n'?'<br>':esc(c)).join('');}
+function corrHtml(items){return `<div class="corr-top"><p class="result" style="margin:0">Correction</p><span class="legend"><mark class="hl-maj">M</mark> majuscules &nbsp; <mark class="hl-pt">.</mark> ponctuation</span></div><div class="corr">${items.map(it=>`<div class="corr-row"><span class="corr-k">${it.c==='groupe'?'Groupe':it.c==='texte'?'Texte':it.k}</span><span class="corr-x">${hlText(it.x)}</span></div>`).join('')}</div>`;}
+function diffVersions(t){const u=units(t),n=u.length,sep=t.g==='poeme'?'\n':' ';const a=Math.max(1,Math.round(n/3)),b=Math.min(n,Math.max(a+1,Math.round(2*n/3)));return [u.slice(0,a),u.slice(0,b),u].map(x=>x.join(sep));}
+function flashItems(){
+  const ths=selThemes(),cur=state.text;
+  const wk=cur&&cur.s&&cur.n==='CE2'&&THEMES[cur.th].semaines?THEMES[cur.th].semaines[cur.s]:null;
+  const motsPool=wk||ths.flatMap(t=>t.mots.concat(state.niv==='CE2'&&t.semaines?Object.values(t.semaines).flat():[]));
+  return [...sample(motsPool,3).map(x=>({k:'Mot',c:'mot',x})),
+   ...sample(ths.flatMap(t=>t.groupes),2).map(x=>({k:'Groupe de mots',c:'groupe',x})),
+   ...sample(themePhrases(),2).map(x=>({k:'Phrase',c:'phrase',x})),
+   {k:'Petit texte',c:'texte',x:excerpt(cur)}];
+}
 
 const body=$('#body'),ctl=$('#ctl');
 function toggleShow(btn,on,off){btn.onclick=()=>{const s=body.classList.toggle('show');btn.textContent=s?off:on;btn.classList.toggle('on',s);};}
@@ -712,8 +755,108 @@ capitales:{name:'Des capitales à la cursive',desc:'Transcrire un texte écrit e
   body.innerHTML=`<div class="txt caps">${nl(esc(state.text.x.toUpperCase()))}</div><div class="txt cp-model cursive-f">${nl(esc(state.text.x))}</div>`;
   toggleShow($('#cpS'),'Montrer le modèle en cursive','Cacher le modèle');
  }
+},
+
+desordre:{name:'Copie en désordre',desc:'Les phrases du texte sont mélangées : on les recopie dans le bon ordre.',
+ consigne:'Les phrases sont dans le désordre. Retrouve l\'ordre du texte, puis recopie-le.',usesText:true,
+ init(){
+  const u=units(state.text),vers=state.text.g==='poeme';
+  ctl.innerHTML=`<button class="btn" id="dsN">Nouveau mélange</button><button class="btn ghost" id="dsS">Montrer l'ordre</button><span class="status">${u.length} ${vers?'vers':'phrases'} à remettre dans l'ordre</span>`;
+  const draw=()=>{
+   body.classList.remove('show');$('#dsS').textContent='Montrer l\'ordre';$('#dsS').classList.remove('on');
+   if(u.length<2){body.innerHTML=`<div class="intro"><p>Ce texte n'a qu'une phrase. Choisissez un autre texte.</p></div>`;return;}
+   let o=u.map((x,k)=>({x,k})),n=0;do{shuffle(o);n++;}while(o.every((e,j)=>e.k===j)&&n<20);
+   const L='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+   const order=o.map((e,j)=>({j,k:e.k})).sort((a,b)=>a.k-b.k).map(e=>L[e.j]).join(' – ');
+   body.innerHTML=`<div class="ds">${o.map((e,j)=>`<div class="ds-row"><span class="ds-l">${L[j]}</span><span class="ds-x">${esc(e.x)}</span><span class="ds-n">${e.k+1}</span></div>`).join('')}</div><p class="ds-sol">Ordre du texte : ${order}</p>`;
+  };
+  $('#dsN').onclick=draw;toggleShow($('#dsS'),'Montrer l\'ordre','Cacher l\'ordre');draw();
+ }
+},
+
+dictee:{name:'Dictée flash',desc:'Mot, groupe, phrase puis petit texte lus à voix haute : on écrit ce qu\'on entend.',
+ consigne:'Écoute bien, puis écris ce que tu as entendu.',usesText:true,
+ init(){
+  this.items=flashItems();this.i=-1;this.phase='idle';this.tok=0;
+  this.ok='speechSynthesis' in window&&'SpeechSynthesisUtterance' in window;
+  if(this.ok){try{speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();}catch(e){this.ok=false;}}
+  ctl.innerHTML=sel('dcR','Vitesse',[[.7,'Lente'],[.85,'Normale'],[1,'Rapide']],state.niv==='CE2'?.7:.85)+
+   `<label><input type="checkbox" id="dcP" ${state.niv==='CE2'?'checked':''}> Dire la ponctuation</label><label><input type="checkbox" id="dcG" checked> Phrases par groupes de mots</label>`+
+   `<button class="btn" id="dcGo">Commencer</button><button class="btn ghost" id="dcRe" disabled>Réécouter</button><button class="btn ghost" id="dcSh" disabled>Montrer</button><button class="btn ghost" id="dcNx" disabled>Suivant →</button><button class="btn ghost" id="dcCo" disabled>Correction</button>`;
+  body.innerHTML=this.ok?`<div class="intro"><p class="big">Dictée flash</p><p>3 mots → 2 groupes de mots → 2 phrases → 1 petit texte</p><p class="muted">Chaque modèle est lu à voix haute. Les phrases sont relues par groupes de mots, puis en entier.</p></div>`
+   :`<div class="intro"><p class="big">Pas de voix</p><p>Ce navigateur ne sait pas lire à voix haute.</p><p class="muted">Essayez Chrome ou Edge, ou dictez vous-même en cliquant sur « Montrer ».</p></div>`;
+  $('#dcGo').onclick=()=>{if(this.phase==='idle'){this.i=0;this.play();}else{initAct();A.i=0;A.play();}};
+  $('#dcRe').onclick=()=>this.play();
+  $('#dcSh').onclick=()=>this.reveal();
+  $('#dcNx').onclick=()=>this.next();
+  $('#dcCo').onclick=()=>this.correction();
+ },
+ voice(){try{const v=speechSynthesis.getVoices();return v.find(x=>/^fr-FR/i.test(x.lang))||v.find(x=>/^fr/i.test(x.lang))||null;}catch(e){return null;}},
+ spoken(t,punct){
+  if(punct){const M={'?':" point d'interrogation.",'!':" point d'exclamation.",':':' deux-points,',';':' point-virgule,',',':' virgule,','.':' point.','«':' ouvrez les guillemets,','»':' fermez les guillemets,'};
+   t=t.replace(/[\s\u00a0]*([?!:;,.«»])/g,(m,c)=>M[c]).replace(/\n/g,' à la ligne. ');}
+  else t=t.replace(/\n/g,'. ');
+  return t.replace(/ /g,' ');
+ },
+ speak(text,punct){return new Promise(res=>{if(!this.ok){res();return;}const u=new SpeechSynthesisUtterance(this.spoken(text,punct));u.lang='fr-FR';const v=this.voice();if(v)u.voice=v;u.rate=+$('#dcR').value;u.onend=res;u.onerror=res;speechSynthesis.speak(u);});},
+ wait(ms){return new Promise(r=>later(r,ms));},
+ chunks(x){
+  const max=state.niv==='CE2'?3:5,out=[];let cur=[];
+  x.replace(/\n/g,' ').split(/ +/).filter(Boolean).forEach(w=>{cur.push(w);if(/[,;:.!?»]$/.test(w)||cur.length>=max){out.push(cur.join(' '));cur=[];}});
+  if(cur.length)out.push(cur.join(' '));return out;
+ },
+ steps(){return ACTS.progressif.steps.call(this);},
+ view(inner){body.innerHTML=this.steps()+`<div class="pg-zone">${inner}</div>`;},
+ btns(on){['dcRe','dcSh','dcNx'].forEach(id=>$('#'+id).disabled=!on);},
+ async play(){
+  stopAll();const tok=++this.tok,it=this.items[this.i];this.phase='listen';this.btns(false);$('#dcCo').disabled=true;$('#dcGo').textContent='Recommencer';
+  const P=$('#dcP').checked,G=$('#dcG').checked,alive=()=>tok===this.tok;
+  this.view(`<div class="spk"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 24h10l14-11v38L20 40H10z" fill="currentColor"/><path d="M42 22c4 5 4 15 0 20M48 16c8 9 8 23 0 32" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round"/></svg><span>Écoute bien…</span></div>`);
+  if(!this.ok){this.after();return;}
+  const short=it.c==='mot'||it.c==='groupe';
+  await this.speak(it.x,P&&!short);if(!alive())return;
+  if(short){await this.wait(1500);if(!alive())return;await this.speak(it.x,false);if(!alive())return;}
+  else if(G){
+   for(const c of this.chunks(it.x)){await this.wait(700);if(!alive())return;await this.speak(c,P);if(!alive())return;
+    await this.wait(wordCount(c)*(state.niv==='CE2'?1700:1200));if(!alive())return;}
+   await this.wait(900);if(!alive())return;await this.speak(it.x,P);if(!alive())return;
+  }
+  this.after();
+ },
+ after(){
+  this.phase='write';const last=this.i===this.items.length-1;
+  this.view(`<div class="pg-write">À toi d'écrire&nbsp;!<small>${this.items[this.i].k} · écris ce que tu as entendu, puis relis-toi</small></div>`);
+  this.btns(true);$('#dcNx').textContent=last?'Terminer':'Suivant →';
+ },
+ reveal(){if(this.phase!=='write'&&this.phase!=='listen')return;const it=this.items[this.i];this.view(`<div class="pg-item k-${it.c}">${hlText(it.x)}</div>`);this.btns(true);},
+ next(){
+  if(this.phase==='idle'){this.i=0;this.play();return;}
+  if(this.phase!=='write')return;
+  if(this.i<this.items.length-1){this.i++;this.play();}
+  else{this.phase='end';stopAll();
+   body.innerHTML=`<div class="intro"><p class="big">Bravo&nbsp;!</p><p>Tu as écrit les 8 dictées flash.</p><button class="btn" id="dcCo2" style="font-size:calc(clamp(17px,1.8vw,26px)*var(--k));padding:.5em 1.2em;margin-top:10px">Voir la correction</button></div>`;
+   $('#dcCo2').onclick=()=>this.correction();this.btns(false);$('#dcCo').disabled=false;}
+ },
+ correction(){if(this.phase!=='end'&&this.phase!=='corr')return;this.phase='corr';body.innerHTML=corrHtml(this.items);},
+ key(e){if(e.key==='ArrowRight'||e.key==='PageDown'){if(this.phase==='end')this.correction();else this.next();return true;}if(e.key==='r'||e.key==='R'){if(this.phase==='write')this.play();return true;}}
+},
+
+diff:{name:'Copie différenciée',desc:'Le même texte en trois longueurs, pour trois groupes.',
+ consigne:'Copie la version de ton groupe.',usesText:true,
+ init(){
+  this.v=this.v||'tous';
+  ctl.innerHTML=sel('dfV','Afficher',[['tous','Les 3 versions côte à côte'],['0','Version courte ★'],['1','Version moyenne ★★'],['2','Version longue ★★★']],this.v)+`<span class="status">Les versions suivent l'ordre du texte : chaque groupe copie le début, plus ou moins long.</span>`;
+  $('#dfV').onchange=()=>{this.v=$('#dfV').value;this.draw();};
+  this.draw();
+ },
+ draw(){
+  const V=diffVersions(state.text),N=['Court','Moyen','Long'],S=['★','★★','★★★'];
+  const panel=(k,cls)=>`<div class="df-p"><div class="df-h"><span class="df-s">${S[k]}</span> ${N[k]} · ${wordCount(V[k])} mots</div><div class="txt ${cls}">${nl(esc(V[k]))}</div></div>`;
+  body.innerHTML=this.v==='tous'?`<div class="df-g">${[0,1,2].map(k=>panel(k,'df-small')).join('')}</div>`:panel(+this.v,'');
+ }
 }
 };
+
 
 /* ===================== INTERFACE ===================== */
 let A=null;
@@ -802,7 +945,17 @@ function showTab(){
 /* ===================== IMPRESSION ===================== */
 function genSheets(){
   const kind=$('#prKind').value;
-  document.querySelectorAll('.onlyTx').forEach(el=>el.hidden=kind!=='textes');
+  document.querySelectorAll('.onlyTx').forEach(el=>el.hidden=kind==='flash'||(kind==='diff'&&el.htmlFor==='prPer'));
+  if(kind==='diff'){
+    $('#prFlashNote').hidden=true;
+    const pages=+$('#prPages').value;let list=shuffle(pool().filter(t=>units(t).length>=3));
+    if(!list.length)list=shuffle(pool().slice());
+    while(list.length<pages)list=list.concat(list);
+    const cur=state.prCursive,N=['Version courte','Version moyenne','Version longue'],S=['★','★★','★★★'];
+    $('#sheets').innerHTML=list.slice(0,pages).map(t=>{const V=diffVersions(t);return `<div class="sheet df-sheet"><div class="hd"><span class="tag">${t.s?'Semaine '+t.s+' · ':''}${GENRES[t.g]} · ${t.n} · ${THEMES[t.th].nom}</span></div><h3 class="df-t">${esc(t.t)}</h3>${V.map((x,k)=>`<div class="df-part"><div class="df-ph"><b>${S[k]}</b> ${N[k]} · ${wordCount(x)} mots</div><div class="model ${cur?'cursive':''} df-m">${esc(x)}</div></div>`).join('')}</div>`;}).join('');
+    document.querySelectorAll('#prFont button').forEach(b=>b.classList.toggle('on',(b.dataset.f==='cursive')===cur));
+    return;
+  }
   $('#prFlashNote').hidden=kind!=='flash';
   if(kind==='flash'){
     const pages=+$('#prPages').value;
