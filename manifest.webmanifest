@@ -1,0 +1,16 @@
+{
+  "name": "Atelier de copie",
+  "short_name": "Copie",
+  "description": "Copie au tableau et fiches à imprimer pour le CE2 et le CM2.",
+  "lang": "fr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f2f3f9",
+  "theme_color": "#2c7fe1",
+  "icons": [
+    {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
